@@ -100,6 +100,8 @@ Default protocol: 10 tasks (UK origins to European cities and islands) × 6 vari
 ## Reading the results
 
 - **Success:** the final itinerary passed the validator. Nothing else counts.
+- **Provider errors** (billing, key, rate limit, outage) are not model failures: those episodes are excluded from
+  success rates and averages, and their number is shown.
 - **Cache status:** `hit` (a compatible template was found), `stale` (a candidate exists but is
   incompatible), `miss` (no candidate), `bypass` (the policy never looks, as with `replan`).
 - **Decision path:** what the episode did, e.g. `reuse > fallback_replan` or `degrade_budget`.

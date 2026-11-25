@@ -32,6 +32,7 @@ from engine.settings import load_dotenv, redact
 
 ROOT = Path(__file__).resolve().parent.parent
 POLICIES = ("replan", "cache", "budget_aware")
+MAX_OUTAGES = 3  # stop after this many consecutive episodes lost to provider errors
 
 
 class JsonlWriter:
@@ -153,7 +154,8 @@ class PolicyRunner:
         base = {"run_id": self.cfg.run_id, "episode_id": episode_id, "task_id": task["id"],
                 "base_id": task.get("base_id", task["id"]), "policy": self.policy, "perturbation": pert}
         trace: list[dict] = []
-        tokens = {"prompt": 0, "completion": 0, "calls": 0, "cost": 0.0, "plan_ms": 0.0}
+        tokens = {"prompt": 0, "completion": 0, "calls": 0, "cost": 0.0, "plan_ms": 0.0, "retries": 0, "retry_ms": 0.0}
+        provider_error: dict | None = None
         attempts: list[Attempt] = []
         decisions: list[str] = []
         t_start = time.perf_counter()
@@ -178,13 +180,14 @@ class PolicyRunner:
                            paced_ms=pacer.wait_ms if pacer else 0.0)
 
         async def replan(feedback: list[str] | None, previous: Plan | None = None) -> Attempt:
+            nonlocal provider_error
             emit({"type": "llm_call_start", "provider": self.client.provider, "model": self.client.model,
                   "feedback": bool(feedback)})
             try:
                 plan, resps, err = await plan_with_llm(
                     self.client, task, self.catalog, feedback,
                     previous=previous.model_dump_json(exclude_defaults=True) if previous else None)
-            except Exception as e:  # noqa: BLE001 - provider/network errors are episode failures
+            except Exception as e:  # noqa: BLE001 - unexpected planner errors are episode failures
                 plan, resps, err = None, [], redact(f"llm_error: {type(e).__name__}: {e}")
             used = sum(r.total_tokens for r in resps)
             for r in resps:
@@ -193,13 +196,18 @@ class PolicyRunner:
                 tokens["calls"] += 1
                 tokens["cost"] += r.cost_usd
                 tokens["plan_ms"] += r.latency_ms
+                tokens["retries"] += r.retries
+                tokens["retry_ms"] += r.retry_ms
+                if r.error_kind:
+                    provider_error = {"kind": r.error_kind, "message": (r.error or "")[:500]}
             self.run_tokens += used
             if used:
                 self._observe_replan(used)
             emit({"type": "llm_call_end", "tokens": used, "ok": plan is not None, "error": err,
                   "calls": [r.as_dict() for r in resps]})
             if plan is None:
-                return Attempt("replan", False, [f"plan_parse_error: {err}"], None, None,
+                return Attempt("replan", False, [f"{'provider_error' if provider_error else 'plan_parse_error'}: {err}"],
+                               None, None,
                                llm=[r.as_dict() for r in resps], error=err)
             att = await execute(plan, "replan")
             att.llm = [r.as_dict() for r in resps]
@@ -311,13 +319,16 @@ class PolicyRunner:
             "llm_calls": tokens["calls"], "prompt_tokens": tokens["prompt"], "completion_tokens": tokens["completion"],
             "total_tokens": ep_tokens(), "cost_usd": round(tokens["cost"], 6),
             "plan_latency_ms": round(tokens["plan_ms"], 3), "exec_latency_ms": round(exec_ms, 3),
-            "latency_ms": round((time.perf_counter() - t_start) * 1000 - paced_ms, 3),  # excludes simulated waiting
+            "latency_ms": round((time.perf_counter() - t_start) * 1000 - paced_ms - tokens["retry_ms"], 3),  # no simulated or retry waits
             "paced": self.cfg.pace, "paced_wait_ms": round(paced_ms, 3) if self.cfg.pace else None,
             "modelled_tool_ms": round(sum(modelled), 3) if modelled is not None else None,
             "latency_profile_id": self.latency.id if self.latency else None,
             "tool_calls": sum(a.result.tool_calls for a in attempts if a.result), "tool_sources": sources,
             "episode_token_budget": self.cfg.episode_token_budget,
             "over_token_budget": self.cfg.episode_token_budget is not None and ep_tokens() > self.cfg.episode_token_budget,
+            # Set when the provider, not the model, ended the episode: excluded from success rates.
+            "provider_error": provider_error, "llm_retries": tokens["retries"],
+            "llm_retry_ms": round(tokens["retry_ms"], 3),
             "success": success, "violations": final.violations if final else ["budget_exhausted: no plan executed"],
             "attempts": [{"mode": a.mode, "ok": a.ok, "violations": a.violations, "llm": a.llm,
                           "exec_ms": a.exec_ms if a.result else None,
@@ -331,7 +342,7 @@ class PolicyRunner:
             "output": out, "plan": final.plan.model_dump() if final and final.plan else None,
             "dag": {"trace": res.trace if res else [], "edges": res.edges if res else []},
         }
-        emit({"type": "episode_end", "success": success, "decision_path": record["decision_path"],
+        emit({"type": "episode_end", "success": success, "provider_error": (provider_error or {}).get("kind"), "decision_path": record["decision_path"],
               "total_tokens": record["total_tokens"], "latency_ms": record["latency_ms"]})
         self.runs.append(record)
         return record
@@ -356,7 +367,7 @@ async def run_benchmark(cfg: RunConfig, client: LLMClient | None = None, progres
     client = client or make_client(cfg.provider, cfg.model)
     stop_file = logs / STOP_FILE
     stop_file.unlink(missing_ok=True)  # a stale STOP from an earlier run must not abort this one
-    stopped = False
+    stopped, stop_reason, outages = False, None, 0
     records: list[dict] = []
     events.append({"ts": time.time(), "run_id": cfg.run_id, "type": "run_start",
                    "config": {k: v for k, v in cfg.__dict__.items()}, "n_tasks": len(tasks),
@@ -378,7 +389,7 @@ async def run_benchmark(cfg: RunConfig, client: LLMClient | None = None, progres
             for task in tasks:
                 for kind in cfg.perturbations:
                     if stop_file.exists():  # graceful stop: checked only between episodes
-                        stopped = True
+                        stopped, stop_reason = True, "requested"
                         break
                     rec = await runner.run_episode(perturb(task, kind, cfg.seed, data["cities"]))
                     records.append(rec)
@@ -386,14 +397,20 @@ async def run_benchmark(cfg: RunConfig, client: LLMClient | None = None, progres
                         print(f"[{policy:12s}] {rec['task_id']:8s} {rec['cache_status']:6s} "
                               f"{'OK ' if rec['success'] else 'FAIL'} tok={rec['total_tokens']:5d} "
                               f"{rec['decision_path']}", flush=True)
+                    err = rec["provider_error"]
+                    outages = outages + 1 if err else 0
+                    if err and (err["kind"] == "fatal" or outages >= MAX_OUTAGES):
+                        stopped, stop_reason = True, f"provider error: {err['message']}"
+                        break
                 if stopped:
                     break
             if stopped:
                 break
         stop_file.unlink(missing_ok=True)
         if stopped and progress:
-            print("Stop requested: run ended after the current episode.", flush=True)
-        events.append({"ts": time.time(), "run_id": cfg.run_id, "type": "run_end", "stopped": stopped,
+            print("Stop requested: run ended after the current episode." if stop_reason == "requested"
+                  else f"Run stopped. {stop_reason}", flush=True)
+        events.append({"ts": time.time(), "run_id": cfg.run_id, "type": "run_end", "stopped": stopped, "stop_reason": stop_reason,
                        "episodes": len(records), "tool_stats": proxy.stats})
     return records
 
@@ -403,11 +420,16 @@ def summarize(records: list[dict]) -> str:
     if not records:
         return "no records"
     df = pd.DataFrame(records)
+    lost = df["provider_error"].notna()
+    note = f"{int(lost.sum())} episode(s) excluded: provider errors\n" if lost.any() else ""
+    df = df[~lost]
+    if df.empty:
+        return note + "no valid episodes"
     g = df.groupby("policy").agg(episodes=("success", "size"), success_rate=("success", "mean"),
                                  mean_tokens=("total_tokens", "mean"), llm_calls=("llm_calls", "sum"),
                                  cost_usd=("cost_usd", "sum"), mean_latency_ms=("latency_ms", "mean"))
     p = df.pivot_table(index="policy", columns="perturbation", values="success", aggfunc="mean")
-    return g.round(3).to_string() + "\n\nSuccess rate by perturbation:\n" + p.round(2).to_string()
+    return note + g.round(3).to_string() + "\n\nSuccess rate by perturbation:\n" + p.round(2).to_string()
 
 
 def parse_args(argv: list[str] | None = None) -> RunConfig:
@@ -471,7 +493,7 @@ def main(argv: list[str] | None = None) -> int:
               f"policies={cfg.policies}", flush=True)
         records = asyncio.run(run_benchmark(cfg, progress=True))
         print("\n" + summarize(records))
-        return 0
+        return 3 if any((r["provider_error"] or {}).get("kind") == "fatal" for r in records) else 0
     finally:
         clear_pid_file(cfg.logs_dir, os.getpid())
 

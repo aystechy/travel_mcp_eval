@@ -77,6 +77,15 @@ def load_actions(path: str, mtime: float) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
+def provider_failed(r) -> bool:
+    """The LLM provider (billing, key, outage), not the model, ended this episode."""
+    if isinstance(r.get("provider_error"), dict):
+        return True
+    v = r.get("violations")  # runs logged before provider_error existed; a slow local model is a real failure
+    return r.get("provider") != "ollama" and not r.get("success") and isinstance(v, list) and any(
+        str(x).startswith("plan_parse_error: llm_error") for x in v)
+
+
 def mtime(p: Path) -> float:
     return p.stat().st_mtime if p.exists() else 0.0
 
@@ -145,7 +154,16 @@ sel_run = st.sidebar.selectbox("Run", run_ids or ["(no runs yet)"], key="run",
                                format_func=lambda r, L=RUN_LABELS: L.get(r, r))
 if run_ids:
     st.sidebar.caption(f"Run ID `{sel_run}`")
-df = runs_df[runs_df["run_id"] == sel_run].copy() if run_ids and not runs_df.empty else pd.DataFrame()
+df_all = runs_df[runs_df["run_id"] == sel_run].copy() if run_ids and not runs_df.empty else pd.DataFrame()
+df = df_all[[not provider_failed(r) for r in df_all.to_dict("records")]] if not df_all.empty else df_all
+N_LOST = len(df_all) - len(df)
+
+
+def lost_note() -> None:
+    if N_LOST:
+        st.warning(f"{N_LOST} of {len(df_all)} episodes are excluded: the LLM provider failed (billing, key, rate limit or "
+                   "outage), so they say nothing about the model. Success rates and averages use the rest. Policies may "
+                   "have lost different episodes, so repeat the run before comparing them.", icon=":material/cloud_off:")
 
 
 @st.cache_data(ttl=5, show_spinner=False)
@@ -405,8 +423,12 @@ def run_status_banner(run_id: str | None, run_events: list[dict], episodes: int)
              f"Run `{run_id}` is in progress (PID {info['pid']}): {n} done."))
     elif ended is not None:
         if ended.get("stopped"):
+            why = str(ended.get("stop_reason") or "")
             state, alert, icon, title, body = ("stopped", st.warning, ":material/stop_circle:", "Stopped",
                                                f"Run `{run_id}` was stopped after {n}.")
+            if why.startswith("provider error"):
+                alert, icon, title = st.error, ":material/cloud_off:", "Stopped by a provider error"
+                body += "\n\n" + why.replace("`", "'").replace("$", "\\$")
         else:
             state, alert, icon, title, body = ("finished", st.success, ":material/check_circle:", "Finished",
                                                f"Run `{run_id}` completed {n}.")
@@ -475,11 +497,15 @@ with tab_live:
             st.info("No events for this run yet. Start a run from the sidebar or with `python -m engine.batch_runner`.")
             return
         ends = [r for r in rows if r.get("type") == "episode_end"]
+        # older runs have no provider_error field: use the records
+        bad = {r["episode_id"] for r in df_all.to_dict("records") if provider_failed(r)}
+        valid = [e for e in ends if not e.get("provider_error") and e.get("episode_id") not in bad]
         live_run_header(sel_run, rows)
         c = st.columns(4) # st.columns(5)
         # c[0].metric("Run", last_run or "-")
         c[0].metric("Episodes done", len(ends))
-        c[1].metric("Success", f"{(sum(e['success'] for e in ends) / len(ends) * 100):.0f}%" if ends else "-")
+        c[1].metric("Success", f"{(sum(e['success'] for e in valid) / len(valid) * 100):.0f}%" if valid else "-",
+                    help=f"{len(ends) - len(valid)} episodes lost to provider errors are excluded." if len(valid) < len(ends) else None)
         c[2].metric("LLM tokens", f"{sum(e.get('total_tokens', 0) for e in ends):,}")
         c[3].metric("Tool calls", sum(1 for r in rows if r.get("type") == "step_end" and r.get("kind") == "tool"))
         run_status_banner(sel_run, rows, len(ends))
@@ -531,16 +557,17 @@ with tab_dag:
 
     if follow:
         live_dag()
-    elif df.empty:
+    elif df_all.empty:
         st.info("No completed episodes for this run.")
     else:
-        dag_labels = episode_labels(df, ["policy", "task_id", "decision_path"])
-        eid = st.selectbox("Episode", df["episode_id"], format_func=lambda e, L=dag_labels: L.get(e, str(e)))
-        rec = df[df.episode_id == eid].iloc[0].to_dict()
+        dag_labels = episode_labels(df_all, ["policy", "task_id", "decision_path"])
+        eid = st.selectbox("Episode", df_all["episode_id"], format_func=lambda e, L=dag_labels: L.get(e, str(e)))
+        rec = df_all[df_all.episode_id == eid].iloc[0].to_dict()
         trace = [{**t, "paced": rec.get("paced") == True} for t in rec["dag"]["trace"]]
         show_episode(dag_view.pipeline(dag_view.events_from_record(rec), False), trace, rec["dag"]["edges"])
 
 with tab_res:
+    lost_note()
     if df.empty:
         st.info("No completed episodes for this run.")
     else:
@@ -583,6 +610,7 @@ with tab_res:
         st.dataframe(df[show], hide_index=True, width="stretch")
 
 with tab_plots:
+    lost_note()
     if df.empty:
         st.info("No data for plots.")
     else:
@@ -709,13 +737,13 @@ with tab_act:
         st.caption("All actions are simulated by engine/local_action_mcp.py; nothing is booked or sent.")
 
 with tab_ep:
-    if df.empty:
+    if df_all.empty:
         st.info("No episodes.")
     else:
-        insp_labels = episode_labels(df, ["policy", "task_id", "cache_status", "decision_path"])
-        eid = st.selectbox("Episode ", df["episode_id"], key="insp",
+        insp_labels = episode_labels(df_all, ["policy", "task_id", "cache_status", "decision_path"])
+        eid = st.selectbox("Episode ", df_all["episode_id"], key="insp",
                            format_func=lambda e, L=insp_labels: L.get(e, str(e)))
-        rec = df[df.episode_id == eid].iloc[0].to_dict()
+        rec = df_all[df_all.episode_id == eid].iloc[0].to_dict()
         ok = rec["success"]
         st.markdown(f"**{'✅ Success' if ok else '❌ Failed'}** · {rec['perturbation_detail']} · "
                     f"tokens {rec['total_tokens']:,} · cost ${rec['cost_usd']:.4f} · {rec['latency_ms']:.0f} ms")
@@ -934,22 +962,23 @@ def task_list(frame: pd.DataFrame) -> str:
 
 def run_card() -> None:
     with st.container(border=True):
-        if df.empty:
+        lost_note()
+        if df_all.empty:
             st.markdown("**Selected run:** none yet. Start one from the sidebar to see its details here.")
             return
         cfg = run_start_config(sel_run)
-        first = df.iloc[0]
+        first = df_all.iloc[0]
         label = first.get("label") if isinstance(first.get("label"), str) else ""
         st.markdown(f"**Selected run** · `{sel_run}`" + (f" · {label}" if label else ""))
         with st.container(horizontal=True):
-            st.metric("Episodes", len(df), border=True)
-            st.metric("Success", f"{df['success'].mean():.0%}", border=True)
-            st.metric("LLM tokens", f"{int(df['total_tokens'].sum()):,}", border=True)
+            st.metric("Episodes", len(df_all), border=True)
+            st.metric("Success", f"{df['success'].mean():.0%}" if len(df) else "–", border=True)
+            st.metric("LLM tokens", f"{int(df_all['total_tokens'].sum()):,}", border=True)
             paid = first.get("provider") not in UNBILLED
-            st.metric("Est. cost", f"${df['cost_usd'].sum():.3f}" if paid else "–", border=True, help=(
+            st.metric("Est. cost", f"${df_all['cost_usd'].sum():.3f}" if paid else "–", border=True, help=(
                 "Token prices are estimates." if paid else "No API charge: the mock planner and local models are not billed."))
         sources: dict[str, int] = {}
-        for per_episode in df.get("tool_sources", pd.Series(dtype=object)):
+        for per_episode in df_all.get("tool_sources", pd.Series(dtype=object)):
             if isinstance(per_episode, dict):
                 for src, n in per_episode.items():
                     sources[src] = sources.get(src, 0) + int(n)
@@ -960,11 +989,11 @@ def run_card() -> None:
         rows = {
             "Planner": f"{first.get('provider')} / {first.get('model')}",
             "Tool source": f"requested {first.get('source')}; actual data: {split}",
-            "Policies": ", ".join(cfg.get("policies") or sorted(df["policy"].unique())),
-            "Perturbations": ", ".join(cfg.get("perturbations") or sorted(df["perturbation"].unique())),
+            "Policies": ", ".join(cfg.get("policies") or sorted(df_all["policy"].unique())),
+            "Perturbations": ", ".join(cfg.get("perturbations") or sorted(df_all["perturbation"].unique())),
             "Dataset": (f"{first['dataset']} (content hash {first['dataset_hash']})"
                         if isinstance(first.get("dataset"), str) else "not logged"),
-            "Tasks": task_list(df),
+            "Tasks": task_list(df_all),
             "Tool latency": (f"modelled, profile {first['latency_profile_id']}"
                              + (", with real-time simulated delays" if cfg.get("pace") else "")
                              if isinstance(first.get("latency_profile_id"), str) else "not modelled"),

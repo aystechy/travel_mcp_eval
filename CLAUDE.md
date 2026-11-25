@@ -56,6 +56,10 @@ by a model-free CPU executor. A deterministic validator decides whether reuse su
     every measured episode time, logged as `paced_wait_ms`, and never added to `modelled_tool_ms`. Never edit the frozen profile by hand.
 13. **`live`/`auto` stay refused** until `config/servers.json` has mappings backed by real request/response adapters.
 
+14. **Provider faults are not model failures.** `classify_error` marks them (`provider_error` in the record); transient ones are
+    retried (logged, kept out of measured time), fatal ones stop the run, and the episodes are excluded from success rates
+    and reported as a count. Local-model timeouts, over-long prompts and bad plans stay model failures.
+
 ## Policies (batch_runner)
 - `replan` — always LLM-plan each episode (baseline), up to `--max-repairs` re-plans with violations.
 - `cache` — reuse compatible cached plan; LLM only on miss/stale; no fallback after a failed reuse.

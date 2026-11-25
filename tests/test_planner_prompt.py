@@ -87,6 +87,7 @@ def test_repair_prompt_shows_the_failed_plan_and_keeps_the_task_readable():
 
 class FailingClient(LLMClient):
     provider = "mock"
+    retry_delays = ()
 
     async def _raw(self, system, user):
         await asyncio.sleep(0.05)

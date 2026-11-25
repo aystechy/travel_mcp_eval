@@ -230,6 +230,18 @@ and hotels into the output and used no `select` steps. Runs before and after thi
 
 The longer prompt raises token counts, including the `mock` estimates; `mock` outcomes are unchanged.
 
+## 6b. Provider errors
+
+| Kind | Examples | Handling |
+|---|---|---|
+| Fatal | No credit, bad key, unknown model, rejected request, missing package | Run stops; episode excluded |
+| Transient | Rate limit, HTTP 5xx, dropped connection, hosted timeout | Up to 3 retries (2, 5, 15 s or `Retry-After`); then excluded; 3 lost episodes in a row stop the run |
+| Model failure | Invalid plan, failed validation, over-long prompt, local model time limit | Counts as a failed episode |
+
+Retry time is logged (`llm_retries`, `llm_retry_ms`) and left out of `plan_latency_ms` and `latency_ms`. Excluded episodes
+are counted in the Results, Paper plots and About tabs. Policies can lose different episodes, so repeat such a run before
+comparing them.
+
 ## 7. Limitations
 
 - **Small local models.** In trials `qwen3:4b-instruct` still corrupted text (for example `"-than": "mapbox"`), with and

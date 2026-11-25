@@ -5,6 +5,7 @@ benchmark can compare the planning cost of re-planning vs. cache reuse on equal 
 """
 from __future__ import annotations
 
+import asyncio
 import os
 import time
 from dataclasses import asdict, dataclass
@@ -54,6 +55,9 @@ class LLMResponse:
     latency_ms: float
     cost_usd: float
     error: str | None = None  # set when the call itself failed; its tokens are then unknown (0)
+    error_kind: str | None = None  # fatal | transient (provider faults), or None (e.g. a local model was too slow)
+    retries: int = 0
+    retry_ms: float = 0.0  # failed tries and back-off before the final try; not part of latency_ms
 
     @property
     def total_tokens(self) -> int:
@@ -66,12 +70,42 @@ class LLMResponse:
         return d
 
 
+_CONNECTION_ERRORS = {"APIConnectionError", "TransportError", "ConnectionError", "TimeoutError"}
+
+
+def classify_error(e: Exception, provider: str) -> str | None:
+    """``transient`` (worth retrying), ``fatal`` (billing, key, model name, setup: every call would fail) or
+    ``None`` (counts against the model: prompt too long, or a local model that ran into the time limit)."""
+    names = {c.__name__ for c in type(e).__mro__}
+    status = getattr(e, "status_code", None) or getattr(getattr(e, "response", None), "status_code", None)
+    text = str(e).lower()
+    if status is None:
+        if provider == "ollama" and names & {"ReadTimeout"}:
+            return None
+        return "transient" if names & _CONNECTION_ERRORS else "fatal"
+    if "insufficient_quota" in text or "credit balance" in text:
+        return "fatal"
+    if status in (408, 409, 429) or status >= 500:
+        return "transient"
+    if status in (400, 413) and any(x in text for x in ("context length", "context window", "prompt is too long")):
+        return None
+    return "fatal"
+
+
+def _retry_after(e: Exception) -> float:
+    try:
+        return min(60.0, max(0.0, float(e.response.headers.get("retry-after", 0))))
+    except (AttributeError, TypeError, ValueError):
+        return 0.0
+
+
 def _est_tokens(text: str) -> int:
     return max(1, len(text) // 4)
 
 
 class LLMClient:
     provider = "base"
+    retry_delays: tuple[float, ...] = (2.0, 5.0, 15.0)  # seconds; SDK retries are off so each one is logged
 
     def __init__(self, model: str | None = None, timeout: float = 180.0):
         self.model = model or default_model(self.provider)
@@ -84,14 +118,23 @@ class LLMClient:
         """Load the model before timing starts (local providers only)."""
 
     async def complete(self, system: str, user: str) -> LLMResponse:
-        t0 = time.perf_counter()
-        try:
-            text, pt, ct = await self._raw(system, user)
-        except Exception as e:  # noqa: BLE001 - a failed call still took time, which must be counted
-            return LLMResponse("", self.provider, self.model, 0, 0, round((time.perf_counter() - t0) * 1000, 3), 0.0,
-                               error=redact(f"llm_error: {type(e).__name__}: {e}"))
-        return LLMResponse(text, self.provider, self.model, pt, ct,
-                           round((time.perf_counter() - t0) * 1000, 3), price(self.provider, self.model, pt, ct))
+        start, n = time.perf_counter(), 0
+        while True:
+            t0 = time.perf_counter()
+            try:
+                text, pt, ct = await self._raw(system, user)
+            except Exception as e:  # noqa: BLE001 - reported to the caller with its kind and duration
+                kind = classify_error(e, self.provider)
+                if kind == "transient" and n < len(self.retry_delays):
+                    await asyncio.sleep(max(self.retry_delays[n], _retry_after(e)))
+                    n += 1
+                    continue
+                return LLMResponse("", self.provider, self.model, 0, 0, round((time.perf_counter() - t0) * 1000, 3),
+                                   0.0, error=redact(f"llm_error: {type(e).__name__}: {e}"), error_kind=kind,
+                                   retries=n, retry_ms=round((t0 - start) * 1000, 3))
+            return LLMResponse(text, self.provider, self.model, pt, ct, round((time.perf_counter() - t0) * 1000, 3),
+                               price(self.provider, self.model, pt, ct), retries=n,
+                               retry_ms=round((t0 - start) * 1000, 3))
 
 
 class MockClient(LLMClient):
@@ -136,7 +179,7 @@ class OpenAIClient(LLMClient):
 
     async def _raw(self, system: str, user: str) -> tuple[str, int, int]:
         from openai import AsyncOpenAI
-        client = AsyncOpenAI(timeout=self.timeout)
+        client = AsyncOpenAI(timeout=self.timeout, max_retries=0)
         r = await client.chat.completions.create(
             model=self.model, temperature=0, response_format={"type": "json_object"},
             messages=[{"role": "system", "content": system}, {"role": "user", "content": user}])
@@ -151,7 +194,7 @@ class DeepSeekClient(LLMClient):
     async def _raw(self, system: str, user: str) -> tuple[str, int, int]:
         from openai import AsyncOpenAI
         client = AsyncOpenAI(api_key=os.environ["DEEPSEEK_API_KEY"], base_url="https://api.deepseek.com",
-                             timeout=self.timeout)
+                             timeout=self.timeout, max_retries=0)
         r = await client.chat.completions.create(
             model=self.model, temperature=0, max_tokens=8192, response_format={"type": "json_object"},
             extra_body={"thinking": {"type": "disabled"}},
@@ -165,7 +208,7 @@ class AnthropicClient(LLMClient):
 
     async def _raw(self, system: str, user: str) -> tuple[str, int, int]:
         from anthropic import AsyncAnthropic
-        client = AsyncAnthropic(timeout=self.timeout)
+        client = AsyncAnthropic(timeout=self.timeout, max_retries=0)
         r = await client.messages.create(model=self.model, max_tokens=8192, system=system,
                                          messages=[{"role": "user", "content": user}])
         text = "".join(getattr(b, "text", "") for b in r.content if getattr(b, "type", "") == "text")
