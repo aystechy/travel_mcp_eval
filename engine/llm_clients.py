@@ -1,4 +1,4 @@
-"""Unified async LLM wrapper: ``mock`` | ``ollama`` | ``openai`` | ``anthropic`` | ``deepseek``.
+"""Unified async LLM wrapper: ``mock`` | ``ollama`` | ``openai`` | ``anthropic`` | ``deepseek`` | ``mistral``.
 
 All clients return ``LLMResponse`` with token usage, wall latency and estimated cost so the
 benchmark can compare the planning cost of re-planning vs. cache reuse on equal footing.
@@ -199,6 +199,26 @@ class DeepSeekClient(LLMClient):
         return r.choices[0].message.content or "", *_openai_usage(r.usage)
 
 
+class MistralClient(LLMClient):
+    """OpenAI-compatible. Thinking is off, or at its lowest level for models that cannot switch it off."""
+    provider = "mistral"
+
+    async def _raw(self, system: str, user: str) -> tuple:
+        from openai import AsyncOpenAI
+        client = AsyncOpenAI(api_key=os.environ["MISTRAL_API_KEY"], base_url="https://api.mistral.ai/v1",
+                             timeout=self.timeout, max_retries=0)
+        effort = ("none" if self.model.startswith("mistral-small") else
+                  "low" if self.model.startswith(("mistral-large", "zai-glm")) else None)
+        r = await client.chat.completions.create(
+            model=self.model, temperature=0, max_tokens=8192, response_format={"type": "json_object"},
+            extra_body={"reasoning_effort": effort} if effort else None,
+            messages=[{"role": "system", "content": system}, {"role": "user", "content": user}])
+        text = r.choices[0].message.content or ""
+        if isinstance(text, list):  # thinking models answer in chunks; only the text chunks are the plan
+            text = "".join(c.get("text", "") for c in text if c.get("type") == "text")
+        return text, *_openai_usage(r.usage)
+
+
 class AnthropicClient(LLMClient):
     provider = "anthropic"
 
@@ -214,7 +234,7 @@ class AnthropicClient(LLMClient):
 
 
 CLIENTS = {c.provider: c for c in (MockClient, OllamaClient, OpenAIClient, AnthropicClient,
-                                        DeepSeekClient)}
+                                        DeepSeekClient, MistralClient)}
 
 
 def make_client(provider: str, model: str | None = None) -> LLMClient:

@@ -21,7 +21,7 @@ flowchart TB
         PT["Perturbations P0-P5"]
         PO["Policy: replan, cache,<br/>budget_aware"]
         PC[("Plan cache<br/>per policy")]
-        LLM["LLM planner: mock,<br/>Ollama, OpenAI,<br/>Anthropic, DeepSeek"]
+        LLM["LLM planner: mock,<br/>Ollama, OpenAI,<br/>Anthropic, DeepSeek,<br/>Mistral"]
         EX["Model-free executor<br/>(plan DAG)"]
         VA["Deterministic validator"]
         AC["Commit actions<br/>(simulated)"]
@@ -250,6 +250,8 @@ provider reports. Thinking tokens are part of output. Each run logs its price ro
 never change old results. `cost_uncached_usd` is the same cost without prompt-cache discounts: compare policies on it,
 because later policies may benefit from prompts cached by earlier ones. An unlisted model, or a prompt longer than the
 listed tier, has no cost. The `mock` price is a fixed reference; DeepSeek uses the peak price (off-peak is half).
+
+Mistral Small runs with thinking off. Mistral Large 4 and GLM cannot switch it off, so they run at `low`.
 
 ## 7. Limitations
 

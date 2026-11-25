@@ -57,7 +57,7 @@ python -m engine.batch_runner --provider anthropic --tasks data/tasks_100.json
 
 | Option | Values |
 |---|---|
-| `--provider` | `mock` (offline heuristic), `ollama`, `openai`, `anthropic`, `deepseek` |
+| `--provider` | `mock` (offline heuristic), `ollama`, `openai`, `anthropic`, `deepseek`, `mistral` |
 | `--model` | Overrides the provider's default model |
 | `--source` | `sim` (simulators, default) or `replay` (recorded responses only). `live` and `auto` are disabled |
 | `--tasks` | Dataset file; default `data/sample_tasks.json` |
@@ -109,6 +109,6 @@ Design rules for contributors are in `CLAUDE.md`.
 - **Tool latency is modelled,** covers normal delays only, and is assumed for experiences and weather.
 - Flight and ferry times are not validated, so same-day connections may be unrealistic.
 - The `mock` planner is not an LLM: its token counts are estimates and its latency is near zero.
-- Prices are estimates; check `engine/llm_clients.py` before reporting cost.
+- Costs are estimates from `config/llm_prices.csv` (sources and dates in the file); recheck before reporting cost.
 - Bookings, calendar events and emails are simulated; nothing is booked or sent.
 - One seed per run, and the default set has only 10 tasks; use `tasks_100` and several seeds before drawing conclusions.

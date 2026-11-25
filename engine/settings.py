@@ -12,15 +12,16 @@ import urllib.request
 from pathlib import Path
 
 ENV_PATH = Path(__file__).resolve().parent.parent / ".env"
-SECRETS = ("OPENAI_API_KEY", "ANTHROPIC_API_KEY", "DEEPSEEK_API_KEY", "MAPBOX_ACCESS_TOKEN")
-PLAIN = ("OLLAMA_HOST", "OLLAMA_MODEL", "OPENAI_MODEL", "ANTHROPIC_MODEL", "DEEPSEEK_MODEL")
+SECRETS = ("OPENAI_API_KEY", "ANTHROPIC_API_KEY", "DEEPSEEK_API_KEY", "MISTRAL_API_KEY", "MAPBOX_ACCESS_TOKEN")
+PLAIN = ("OLLAMA_HOST", "OLLAMA_MODEL", "OPENAI_MODEL", "ANTHROPIC_MODEL", "DEEPSEEK_MODEL", "MISTRAL_MODEL")
 GROUPS = {"openai": ("OPENAI_API_KEY", "OPENAI_MODEL"), "anthropic": ("ANTHROPIC_API_KEY", "ANTHROPIC_MODEL"),
-          "deepseek": ("DEEPSEEK_API_KEY", "DEEPSEEK_MODEL"), "ollama": ("OLLAMA_HOST", "OLLAMA_MODEL"),
+          "deepseek": ("DEEPSEEK_API_KEY", "DEEPSEEK_MODEL"),
+          "mistral": ("MISTRAL_API_KEY", "MISTRAL_MODEL"), "ollama": ("OLLAMA_HOST", "OLLAMA_MODEL"),
           "mapbox": ("MAPBOX_ACCESS_TOKEN",)}
 KEYS = SECRETS + PLAIN
 DEFAULTS = {"OLLAMA_HOST": "http://localhost:11434", "OLLAMA_MODEL": "qwen2.5:7b-instruct-q4_K_M",
             "OPENAI_MODEL": "gpt-4o-mini", "ANTHROPIC_MODEL": "claude-sonnet-5-5",
-            "DEEPSEEK_MODEL": "deepseek-flash"}
+            "DEEPSEEK_MODEL": "deepseek-flash", "MISTRAL_MODEL": "mistral-small-2603"}
 
 
 def read_env_file(path: Path = ENV_PATH) -> dict[str, str]:
@@ -107,6 +108,8 @@ def check_connection(name: str, values: dict[str, str], timeout: float = 10.0) -
         url, headers = "https://api.openai.com/v1/models", {"Authorization": f"Bearer {values['OPENAI_API_KEY']}"}
     elif name == "deepseek":
         url, headers = "https://api.deepseek.com/models", {"Authorization": f"Bearer {values['DEEPSEEK_API_KEY']}"}
+    elif name == "mistral":
+        url, headers = "https://api.mistral.ai/v1/models", {"Authorization": f"Bearer {values['MISTRAL_API_KEY']}"}
     elif name == "anthropic":
         url = "https://api.anthropic.com/v1/models?limit=1000"
         headers = {"x-api-key": values["ANTHROPIC_API_KEY"], "anthropic-version": "2023-06-01"}

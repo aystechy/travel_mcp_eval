@@ -449,7 +449,7 @@ def parse_args(argv: list[str] | None = None) -> RunConfig:
     ap.add_argument("--tasks", default=RunConfig.tasks_path)
     ap.add_argument("--policies", default=",".join(POLICIES))
     ap.add_argument("--perturbations", default=",".join(KINDS))
-    ap.add_argument("--provider", default="mock", choices=["mock", "ollama", "openai", "anthropic", "deepseek"])
+    ap.add_argument("--provider", default="mock", choices=["mock", "ollama", "openai", "anthropic", "deepseek", "mistral"])
     ap.add_argument("--model", default=None)
     ap.add_argument("--source", default="sim", choices=["sim", "live", "replay", "auto"])
     ap.add_argument("--seed", type=int, default=7)

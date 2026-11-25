@@ -24,7 +24,7 @@ def test_every_row_is_sourced_and_default_models_are_listed():
             assert r["source_url"].startswith("https://") and r["checked_on"] and r["input"] > 0 and r["output"] > 0
             assert r["cached_input"] is None or r["cached_input"] < r["input"]
             assert r["cache_write"] is None or r["cache_write"] > r["input"]
-    for p in ("openai", "anthropic", "deepseek"):
+    for p in ("openai", "anthropic", "deepseek", "mistral"):
         assert find(p, DEFAULTS[f"{p.upper()}_MODEL"])
         assert sum(k[0] == p for k in table) >= 3
 
@@ -80,6 +80,56 @@ def test_openai_and_deepseek_cached_tokens_and_temperature(monkeypatch):
     fake_openai(monkeypatch, NS(prompt_tokens=1000, completion_tokens=0, prompt_cache_hit_tokens=900))
     r = complete("deepseek", "deepseek-flash")
     assert r.cached_tokens == 900 and r.cost_usd < r.cost_uncached_usd
+
+
+@pytest.mark.parametrize("model,effort", [("mistral-small-2603", "none"), ("mistral-large-4-0", "low"),
+                                          ("zai-glm-5-3", "low"), ("codestral-2508", None)])
+def test_mistral_request_and_answer(monkeypatch, model, effort):
+    seen = {}
+    chunks = [{"type": "thinking", "thinking": [{"type": "text", "text": "hmm"}]}, {"type": "text", "text": "{}"}]
+
+    class Fake:
+        def __init__(self, **kw):
+            seen.update(kw)
+            self.chat = NS(completions=NS(create=self.create))
+
+        async def create(self, **kw):
+            seen.update(kw)
+            usage = NS(prompt_tokens=1000, completion_tokens=100, prompt_tokens_details=NS(cached_tokens=640))
+            return NS(usage=usage, choices=[NS(message=NS(content=chunks if effort == "low" else "{}"))])
+    monkeypatch.setattr(openai, "AsyncOpenAI", Fake)
+    monkeypatch.setenv("MISTRAL_API_KEY", "x")
+    r = complete("mistral", model)
+    assert seen["base_url"] == "https://api.mistral.ai/v1" and seen["api_key"] == "x"
+    assert (seen["extra_body"] or {}).get("reasoning_effort") == effort
+    assert r.text == "{}" and r.cached_tokens == 640 and r.cost_usd is not None
+
+
+def test_mistral_settings_and_connection_check(monkeypatch, tmp_path):
+    import io
+
+    from streamlit.testing.v1 import AppTest
+
+    from engine import settings
+    seen = {}
+
+    class Opener:
+        def open(self, request, timeout):
+            seen.update(url=request.full_url, auth=request.get_header("Authorization"))
+            return io.BytesIO(b'{"data": [{"id": "mistral-small-2603"}]}')
+    with monkeypatch.context() as m:
+        m.setattr(settings.urllib.request, "build_opener", lambda *a: Opener())
+        ok, _ = settings.check_connection("mistral", {"MISTRAL_API_KEY": "k", "MISTRAL_MODEL": "mistral-small-2603"})
+    assert ok and seen == {"url": "https://api.mistral.ai/v1/models", "auth": "Bearer k"}
+    monkeypatch.setenv("MISTRAL_API_KEY", "mk-very-secret")
+    assert "mk-very" not in settings.redact("bad key mk-very-secret")
+    at = AppTest.from_file(str(ROOT / "app.py"), default_timeout=60)
+    at.session_state["logs_dir"] = str(tmp_path)
+    at.run()
+    at.button(key="set_open_btn").click().run()
+    at.selectbox(key="set_group").select("mistral").run()
+    assert not at.exception and at.text_input(key="set_MISTRAL_MODEL")
+    assert any("mistral" in s.options and "mock" in s.options for s in at.selectbox)
 
 
 def test_anthropic_prompt_total_includes_cached_tokens(monkeypatch):

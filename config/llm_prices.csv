@@ -48,3 +48,25 @@ openai,chat-latest,5,0.5,,30,,Standard tier,https://developers.openai.com/api/do
 deepseek,deepseek-flash,0.3,0.006,,1.2,,Peak price (off-peak is half),https://api-docs.deepseek.com/quick_start/pricing,2026-11-25
 deepseek,deepseek-v4-pro,1.32,0.044,,3.96,,Peak price (off-peak is half),https://api-docs.deepseek.com/quick_start/pricing,2026-11-25
 deepseek,deepseek-v4-flash,0.3,0.006,,1.2,,Peak price (off-peak is half); legacy name billed as deepseek-flash,https://api-docs.deepseek.com/quick_start/pricing,2026-11-25
+mistral,mistral-large-4-0,0.7,0.07,,2.1,,Standard tier,https://docs.mistral.ai/models/model-cards/mistral-large-4-0,2026-11-25
+mistral,mistral-large,0.7,0.07,,2.1,,Standard tier; alias: the provider may repoint it,https://docs.mistral.ai/models/model-cards/mistral-large-4-0,2026-11-25
+mistral,mistral-small-2603,0.15,,,0.6,,Standard tier,https://docs.mistral.ai/models/model-cards/mistral-small-4-0-26-03,2026-11-25
+mistral,mistral-small-4-0-26-03,0.15,,,0.6,,Standard tier,https://docs.mistral.ai/models/model-cards/mistral-small-4-0-26-03,2026-11-25
+mistral,mistral-small-latest,0.15,,,0.6,,Standard tier; alias: the provider may repoint it,https://docs.mistral.ai/models/model-cards/mistral-small-4-0-26-03,2026-11-25
+mistral,ministral-14b-2512,0.2,,,0.2,,Standard tier,https://docs.mistral.ai/models/model-cards/ministral-3-14b-25-12,2026-11-25
+mistral,ministral-3-14b-25-12,0.2,,,0.2,,Standard tier,https://docs.mistral.ai/models/model-cards/ministral-3-14b-25-12,2026-11-25
+mistral,ministral-14b-latest,0.2,,,0.2,,Standard tier; alias: the provider may repoint it,https://docs.mistral.ai/models/model-cards/ministral-3-14b-25-12,2026-11-25
+mistral,ministral-8b-2512,0.15,,,0.15,,Standard tier,https://docs.mistral.ai/models/model-cards/ministral-3-8b-25-12,2026-11-25
+mistral,ministral-3-8b-25-12,0.15,,,0.15,,Standard tier,https://docs.mistral.ai/models/model-cards/ministral-3-8b-25-12,2026-11-25
+mistral,ministral-8b-latest,0.15,,,0.15,,Standard tier; alias: the provider may repoint it,https://docs.mistral.ai/models/model-cards/ministral-3-8b-25-12,2026-11-25
+mistral,ministral-3b-2512,0.1,,,0.1,,Standard tier,https://docs.mistral.ai/models/model-cards/ministral-3-3b-25-12,2026-11-25
+mistral,ministral-3-3b-25-12,0.1,,,0.1,,Standard tier,https://docs.mistral.ai/models/model-cards/ministral-3-3b-25-12,2026-11-25
+mistral,ministral-3b-latest,0.1,,,0.1,,Standard tier; alias: the provider may repoint it,https://docs.mistral.ai/models/model-cards/ministral-3-3b-25-12,2026-11-25
+mistral,codestral-2508,0.3,,,0.9,,Standard tier,https://docs.mistral.ai/models/model-cards/codestral-25-08,2026-11-25
+mistral,codestral-25-08,0.3,,,0.9,,Standard tier,https://docs.mistral.ai/models/model-cards/codestral-25-08,2026-11-25
+mistral,codestral-latest,0.3,,,0.9,,Standard tier; alias: the provider may repoint it,https://docs.mistral.ai/models/model-cards/codestral-25-08,2026-11-25
+mistral,zai-glm-5-3,1.4,0.14,,4.4,,Standard tier,https://docs.mistral.ai/models/model-cards/zai-glm-5-3,2026-11-25
+mistral,zai-glm-5,1.4,0.14,,4.4,,Standard tier; alias: the provider may repoint it,https://docs.mistral.ai/models/model-cards/zai-glm-5-3,2026-11-25
+mistral,zai-glm-latest,1.4,0.14,,4.4,,Standard tier; alias: the provider may repoint it,https://docs.mistral.ai/models/model-cards/zai-glm-5-3,2026-11-25
+mistral,zai-glm-5-3-flash,0.15,0.03,,0.5,,Standard tier,https://docs.mistral.ai/inference/pricing,2026-11-25
+mistral,deepseek-v4-1-flash-1017,0.3,0.007,,1.2,,Standard tier,https://docs.mistral.ai/inference/pricing,2026-11-25

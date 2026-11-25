@@ -12,7 +12,7 @@ by a model-free CPU executor. A deterministic validator decides whether reuse su
   compatibility check, JSON persistence, per-entry success stats.
 - `engine/planner.py` — planner prompt, plan parsing/repair, `HeuristicPlanner` (mock LLM),
   `TOOL_RESULTS` (result fields shown to LLMs; tested against the simulators), `check_grounded` (rejects invented outputs).
-- `engine/llm_clients.py` — unified `LLMClient` for `mock | ollama | openai | anthropic | deepseek`.
+- `engine/llm_clients.py` — unified `LLMClient` for `mock | ollama | openai | anthropic | deepseek | mistral`.
 - `engine/mcp_proxy.py` — multi-server client: Streamable HTTP (live) + in-memory FastMCP (sim/actions),
   SHA-256 disk replay cache in `cache/replay/`.
 - `engine/sim_servers.py` — deterministic in-memory stand-ins for the 6 travel servers.

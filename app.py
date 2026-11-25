@@ -323,7 +323,7 @@ with st.sidebar.expander("Launch benchmark run", expanded=not run_ids):
         ds_name, ds_path, ds_data = active_dataset()
         n_tasks = len(ds_data["tasks"])
         st.caption(f"Dataset: `{ds_name}` ({n_tasks} tasks). Change it in the Dataset tab.")
-        provider = st.selectbox("Provider", ["mock", "ollama", "openai", "anthropic", "deepseek"])
+        provider = st.selectbox("Provider", ["mock", "ollama", "openai", "anthropic", "deepseek", "mistral"])
         if provider != "mock":
             conf = settings.effective(st.session_state.get("session_settings"))
             key_name = f"{provider.upper()}_API_KEY"
