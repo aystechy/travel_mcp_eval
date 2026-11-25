@@ -13,28 +13,37 @@ without a **budget-aware** fallback, across controlled task perturbations.
 
 ```mermaid
 flowchart LR
-    T[Task] --> L{Plan cache<br/>lookup}
-    L -- hit --> R[Re-execute cached<br/>template on CPU<br/>0 LLM tokens]
-    L -- "miss / stale" --> P[LLM writes a<br/>JSON plan]
-    R --> V{Deterministic<br/>validator}
-    P --> X[Execute plan:<br/>MCP tool calls,<br/>JMESPath, safe math] --> V
-    V -- pass --> A[Commit actions:<br/>book hotel, calendar,<br/>email - simulated]
-    V -- "fail (budget_aware,<br/>budget left)" --> P
-    V -- fail --> F[Episode fails]
-    P -. validated plan .-> S[(Store as<br/>template)]
+    T[Task] --> L{Cache}
+    L -- "miss, stale,<br/>or replan" --> P["LLM plan<br/>checked, one retry"]
+    L -- "hit: reuse" --> X[Execute]
+    P -- valid --> X
+    P -- invalid --> F[Episode fails]
+    X --> V{Validate}
+    V -- pass --> B["Book<br/>(simulated)"]
+    V -- fail --> D{"Try<br/>again?"}
+    D -- yes --> P
+    D -- no --> F
 ```
 
-1. **Plan.** The LLM receives the task and the tool catalogue and returns a plan: a DAG of MCP tool
-   calls (flights, hotels, ferries, geocoding, weather, experiences), JMESPath selections and
-   whitelisted arithmetic. A plan is code, not prose, so it can be re-run without the model.
+**Try again?** A failed LLM plan gets one repair under every policy. A failed *reuse* is re-planned only under
+`budget_aware`. `replan` never looks in the cache, and `budget_aware` can skip a cached plan that often fails.
+
+Stage names match the Live DAG tab. Under `budget_aware`, a first plan, a repair or a re-plan needs enough token
+budget; otherwise the episode ends (see Policies below).
+
+1. **Plan.** The LLM receives the task, the tools with their result fields, and a short example of the plan language.
+   It returns a plan: a DAG of MCP tool calls (flights, hotels, ferries, geocoding, weather, experiences), JMESPath
+   selections and whitelisted arithmetic. A plan is code, not prose, so it can be re-run without the model.
+   Before any tool runs, a check rejects malformed plans and results the model invented; the LLM gets one retry. A
+   repair also shows the LLM its failed plan and the violations.
 2. **Execute.** A model-free executor runs the DAG level by level (independent tool calls run
-   concurrently). This step never calls an LLM.
+   concurrently). This step never calls an LLM. A step that fails counts as a failed validation.
 3. **Validate.** An independent, deterministic validator checks routes, dates, ferry legs for island
    destinations, every constraint, and the budget. It **recomputes the total cost itself** and flags
    any mismatch with the plan's own arithmetic.
 4. **Commit.** Only a passing itinerary triggers side effects (booking, calendar event, email). They
    are simulated and written to `logs/simulated_actions.jsonl`; nothing is booked or sent.
-5. **Cache.** A validated LLM plan is stored as a template: literal task values (dates, cities,
+5. **Cache.** Under `cache` and `budget_aware`, a validated LLM plan is stored as a template: literal task values (dates, cities,
    travellers, email) are replaced by references to the task, so the same plan can run on a new task.
 
 ## Why reuse can fail (by design)
