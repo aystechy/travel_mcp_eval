@@ -1,0 +1,422 @@
+{
+  "cities": {
+    "Barcelona": {
+      "city": "Barcelona",
+      "country": "ES",
+      "type": "hub",
+      "gateway_iata": "BCN",
+      "ferry": null,
+      "lat": 41.3874,
+      "lon": 2.1686
+    },
+    "Lisbon": {
+      "city": "Lisbon",
+      "country": "PT",
+      "type": "hub",
+      "gateway_iata": "LIS",
+      "ferry": null,
+      "lat": 38.7223,
+      "lon": -9.1393
+    },
+    "Rome": {
+      "city": "Rome",
+      "country": "IT",
+      "type": "hub",
+      "gateway_iata": "FCO",
+      "ferry": null,
+      "lat": 41.9028,
+      "lon": 12.4964
+    },
+    "Amsterdam": {
+      "city": "Amsterdam",
+      "country": "NL",
+      "type": "hub",
+      "gateway_iata": "AMS",
+      "ferry": null,
+      "lat": 52.3676,
+      "lon": 4.9041
+    },
+    "Prague": {
+      "city": "Prague",
+      "country": "CZ",
+      "type": "hub",
+      "gateway_iata": "PRG",
+      "ferry": null,
+      "lat": 50.0755,
+      "lon": 14.4378
+    },
+    "Vienna": {
+      "city": "Vienna",
+      "country": "AT",
+      "type": "hub",
+      "gateway_iata": "VIE",
+      "ferry": null,
+      "lat": 48.2082,
+      "lon": 16.3738
+    },
+    "Copenhagen": {
+      "city": "Copenhagen",
+      "country": "DK",
+      "type": "hub",
+      "gateway_iata": "CPH",
+      "ferry": null,
+      "lat": 55.6761,
+      "lon": 12.5683
+    },
+    "Palma": {
+      "city": "Palma",
+      "country": "ES",
+      "type": "hub",
+      "gateway_iata": "PMI",
+      "ferry": null,
+      "lat": 39.5696,
+      "lon": 2.6502
+    },
+    "Naxos": {
+      "city": "Naxos",
+      "country": "GR",
+      "type": "island",
+      "gateway_iata": "ATH",
+      "ferry": {
+        "from_port": "Piraeus",
+        "to_port": "Naxos"
+      },
+      "lat": 37.1036,
+      "lon": 25.3766
+    },
+    "Capri": {
+      "city": "Capri",
+      "country": "IT",
+      "type": "island",
+      "gateway_iata": "NAP",
+      "ferry": {
+        "from_port": "Naples",
+        "to_port": "Capri"
+      },
+      "lat": 40.5532,
+      "lon": 14.2222
+    },
+    "Hvar": {
+      "city": "Hvar",
+      "country": "HR",
+      "type": "island",
+      "gateway_iata": "SPU",
+      "ferry": {
+        "from_port": "Split",
+        "to_port": "Hvar"
+      },
+      "lat": 43.1729,
+      "lon": 16.4411
+    }
+  },
+  "tasks": [
+    {
+      "id": "T01",
+      "intent": "trip",
+      "description": "Long weekend in Barcelona for two",
+      "origin": {
+        "city": "Manchester",
+        "iata": "MAN"
+      },
+      "destination": {
+        "city": "Barcelona",
+        "country": "ES",
+        "type": "hub",
+        "gateway_iata": "BCN",
+        "ferry": null,
+        "lat": 41.3874,
+        "lon": 2.1686
+      },
+      "depart_date": "2027-05-14",
+      "return_date": "2027-05-18",
+      "travelers": 2,
+      "budget": 1400,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1
+      },
+      "traveler": {
+        "name": "Alex Morgan",
+        "email": "alex.morgan@example.com"
+      }
+    },
+    {
+      "id": "T02",
+      "intent": "trip",
+      "description": "A week on Naxos via Athens and the Piraeus ferry",
+      "origin": {
+        "city": "London",
+        "iata": "LHR"
+      },
+      "destination": {
+        "city": "Naxos",
+        "country": "GR",
+        "type": "island",
+        "gateway_iata": "ATH",
+        "ferry": {
+          "from_port": "Piraeus",
+          "to_port": "Naxos"
+        },
+        "lat": 37.1036,
+        "lon": 25.3766
+      },
+      "depart_date": "2027-06-10",
+      "return_date": "2027-06-17",
+      "travelers": 2,
+      "budget": 2600,
+      "currency": "GBP",
+      "constraints": {
+        "min_hotel_rating": 4.0
+      },
+      "traveler": {
+        "name": "Priya Shah",
+        "email": "priya.shah@example.com"
+      }
+    },
+    {
+      "id": "T03",
+      "intent": "trip",
+      "description": "Solo city break in Lisbon",
+      "origin": {
+        "city": "Edinburgh",
+        "iata": "EDI"
+      },
+      "destination": {
+        "city": "Lisbon",
+        "country": "PT",
+        "type": "hub",
+        "gateway_iata": "LIS",
+        "ferry": null,
+        "lat": 38.7223,
+        "lon": -9.1393
+      },
+      "depart_date": "2027-04-22",
+      "return_date": "2027-04-26",
+      "travelers": 1,
+      "budget": 750,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1
+      },
+      "traveler": {
+        "name": "Jamie Reid",
+        "email": "jamie.reid@example.com"
+      }
+    },
+    {
+      "id": "T04",
+      "intent": "trip",
+      "description": "Capri summer trip via Naples",
+      "origin": {
+        "city": "Manchester",
+        "iata": "MAN"
+      },
+      "destination": {
+        "city": "Capri",
+        "country": "IT",
+        "type": "island",
+        "gateway_iata": "NAP",
+        "ferry": {
+          "from_port": "Naples",
+          "to_port": "Capri"
+        },
+        "lat": 40.5532,
+        "lon": 14.2222
+      },
+      "depart_date": "2027-07-03",
+      "return_date": "2027-07-09",
+      "travelers": 2,
+      "budget": 3200,
+      "currency": "GBP",
+      "constraints": {
+        "min_hotel_rating": 4.0,
+        "max_stops": 1
+      },
+      "traveler": {
+        "name": "Alex Morgan",
+        "email": "alex.morgan@example.com"
+      }
+    },
+    {
+      "id": "T05",
+      "intent": "trip",
+      "description": "Direct-flight business trip to Amsterdam",
+      "origin": {
+        "city": "London",
+        "iata": "LHR"
+      },
+      "destination": {
+        "city": "Amsterdam",
+        "country": "NL",
+        "type": "hub",
+        "gateway_iata": "AMS",
+        "ferry": null,
+        "lat": 52.3676,
+        "lon": 4.9041
+      },
+      "depart_date": "2027-03-18",
+      "return_date": "2027-03-21",
+      "travelers": 1,
+      "budget": 650,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 0
+      },
+      "traveler": {
+        "name": "Priya Shah",
+        "email": "priya.shah@example.com"
+      }
+    },
+    {
+      "id": "T06",
+      "intent": "trip",
+      "description": "Hvar island week via Split",
+      "origin": {
+        "city": "Edinburgh",
+        "iata": "EDI"
+      },
+      "destination": {
+        "city": "Hvar",
+        "country": "HR",
+        "type": "island",
+        "gateway_iata": "SPU",
+        "ferry": {
+          "from_port": "Split",
+          "to_port": "Hvar"
+        },
+        "lat": 43.1729,
+        "lon": 16.4411
+      },
+      "depart_date": "2027-08-12",
+      "return_date": "2027-08-19",
+      "travelers": 2,
+      "budget": 2800,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1
+      },
+      "traveler": {
+        "name": "Jamie Reid",
+        "email": "jamie.reid@example.com"
+      }
+    },
+    {
+      "id": "T07",
+      "intent": "trip",
+      "description": "Rome sightseeing for a couple",
+      "origin": {
+        "city": "Manchester",
+        "iata": "MAN"
+      },
+      "destination": {
+        "city": "Rome",
+        "country": "IT",
+        "type": "hub",
+        "gateway_iata": "FCO",
+        "ferry": null,
+        "lat": 41.9028,
+        "lon": 12.4964
+      },
+      "depart_date": "2027-09-09",
+      "return_date": "2027-09-13",
+      "travelers": 2,
+      "budget": 1500,
+      "currency": "GBP",
+      "constraints": {
+        "min_hotel_rating": 3.5
+      },
+      "traveler": {
+        "name": "Alex Morgan",
+        "email": "alex.morgan@example.com"
+      }
+    },
+    {
+      "id": "T08",
+      "intent": "trip",
+      "description": "Family of four to Mallorca, direct flights only",
+      "origin": {
+        "city": "London",
+        "iata": "LHR"
+      },
+      "destination": {
+        "city": "Palma",
+        "country": "ES",
+        "type": "hub",
+        "gateway_iata": "PMI",
+        "ferry": null,
+        "lat": 39.5696,
+        "lon": 2.6502
+      },
+      "depart_date": "2027-06-24",
+      "return_date": "2027-06-30",
+      "travelers": 4,
+      "budget": 3300,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 0
+      },
+      "traveler": {
+        "name": "Priya Shah",
+        "email": "priya.shah@example.com"
+      }
+    },
+    {
+      "id": "T09",
+      "intent": "trip",
+      "description": "Budget solo trip to Prague",
+      "origin": {
+        "city": "Edinburgh",
+        "iata": "EDI"
+      },
+      "destination": {
+        "city": "Prague",
+        "country": "CZ",
+        "type": "hub",
+        "gateway_iata": "PRG",
+        "ferry": null,
+        "lat": 50.0755,
+        "lon": 14.4378
+      },
+      "depart_date": "2027-10-07",
+      "return_date": "2027-10-11",
+      "travelers": 1,
+      "budget": 700,
+      "currency": "GBP",
+      "constraints": {},
+      "traveler": {
+        "name": "Jamie Reid",
+        "email": "jamie.reid@example.com"
+      }
+    },
+    {
+      "id": "T10",
+      "intent": "trip",
+      "description": "Copenhagen design weekend",
+      "origin": {
+        "city": "Manchester",
+        "iata": "MAN"
+      },
+      "destination": {
+        "city": "Copenhagen",
+        "country": "DK",
+        "type": "hub",
+        "gateway_iata": "CPH",
+        "ferry": null,
+        "lat": 55.6761,
+        "lon": 12.5683
+      },
+      "depart_date": "2027-11-04",
+      "return_date": "2027-11-07",
+      "travelers": 2,
+      "budget": 1300,
+      "currency": "GBP",
+      "constraints": {
+        "min_hotel_rating": 4.0
+      },
+      "traveler": {
+        "name": "Alex Morgan",
+        "email": "alex.morgan@example.com"
+      }
+    }
+  ]
+}

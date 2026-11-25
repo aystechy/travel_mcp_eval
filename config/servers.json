@@ -1,0 +1,68 @@
+{
+  "_comment": "Each server exposes canonical tools via its in-memory simulator. URLs were checked on 2026-11-25 and are used only by engine.calibrate_latency; see docs/ARCHITECTURE.md. tool_map/arg_map stay empty: the real servers need full request/response adapters, and --source live/auto is refused until a mapping exists.",
+  "servers": {
+    "kiwi": {
+      "description": "Flight search (Kiwi.com MCP)",
+      "transport": "streamable_http",
+      "url": "https://mcp.kiwi.com",
+      "auth_env": null,
+      "sim": "flights",
+      "tool_map": {},
+      "arg_map": {}
+    },
+    "trivago": {
+      "description": "Hotel search (trivago MCP)",
+      "transport": "streamable_http",
+      "url": "https://mcp.trivago.com/mcp",
+      "auth_env": null,
+      "sim": "hotels",
+      "tool_map": {},
+      "arg_map": {}
+    },
+    "mapbox": {
+      "description": "Geocoding and directions (Mapbox hosted MCP)",
+      "transport": "streamable_http",
+      "url": "https://mcp.mapbox.com/mcp",
+      "auth_env": "MAPBOX_ACCESS_TOKEN",
+      "sim": "geo",
+      "tool_map": {},
+      "arg_map": {}
+    },
+    "ferryhopper": {
+      "description": "Ferry routes and sailings (Ferryhopper MCP)",
+      "transport": "streamable_http",
+      "url": "https://mcp.ferryhopper.com/mcp",
+      "auth_env": null,
+      "sim": "ferries",
+      "tool_map": {},
+      "arg_map": {}
+    },
+    "peek": {
+      "description": "Experiences and activities (Peek MCP)",
+      "transport": "streamable_http",
+      "url": "https://mcp.peek.com",
+      "auth_env": null,
+      "sim": "experiences",
+      "tool_map": {},
+      "arg_map": {}
+    },
+    "weather": {
+      "description": "Daily forecast (Open-Meteo-style MCP; set URL to your deployment)",
+      "transport": "streamable_http",
+      "url": "",
+      "auth_env": null,
+      "sim": "weather",
+      "tool_map": {},
+      "arg_map": {}
+    },
+    "actions": {
+      "description": "Local side-effect server (bookings, calendar, email) - always in-memory",
+      "transport": "in_memory",
+      "url": null,
+      "auth_env": null,
+      "sim": "actions",
+      "tool_map": {},
+      "arg_map": {}
+    }
+  }
+}

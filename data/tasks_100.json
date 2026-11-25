@@ -1,0 +1,3358 @@
+{
+  "metadata": {
+    "dataset_name": "travel-mcp-tasks-100",
+    "seed": 2027,
+    "num_tasks": 100,
+    "num_cities": 23,
+    "budget_margin": [
+      1.15,
+      1.6
+    ],
+    "budget_basis": "cheapest valid itinerary at simulator prices (--source sim)",
+    "generator": "data/build_tasks_100.py"
+  },
+  "cities": {
+    "Barcelona": {
+      "city": "Barcelona",
+      "country": "ES",
+      "type": "hub",
+      "gateway_iata": "BCN",
+      "ferry": null,
+      "lat": 41.3874,
+      "lon": 2.1686
+    },
+    "Lisbon": {
+      "city": "Lisbon",
+      "country": "PT",
+      "type": "hub",
+      "gateway_iata": "LIS",
+      "ferry": null,
+      "lat": 38.7223,
+      "lon": -9.1393
+    },
+    "Amsterdam": {
+      "city": "Amsterdam",
+      "country": "NL",
+      "type": "hub",
+      "gateway_iata": "AMS",
+      "ferry": null,
+      "lat": 52.3676,
+      "lon": 4.9041
+    },
+    "Rome": {
+      "city": "Rome",
+      "country": "IT",
+      "type": "hub",
+      "gateway_iata": "FCO",
+      "ferry": null,
+      "lat": 41.9028,
+      "lon": 12.4964
+    },
+    "Berlin": {
+      "city": "Berlin",
+      "country": "DE",
+      "type": "hub",
+      "gateway_iata": "BER",
+      "ferry": null,
+      "lat": 52.52,
+      "lon": 13.405
+    },
+    "Paris": {
+      "city": "Paris",
+      "country": "FR",
+      "type": "hub",
+      "gateway_iata": "CDG",
+      "ferry": null,
+      "lat": 48.8566,
+      "lon": 2.3522
+    },
+    "Madrid": {
+      "city": "Madrid",
+      "country": "ES",
+      "type": "hub",
+      "gateway_iata": "MAD",
+      "ferry": null,
+      "lat": 40.4168,
+      "lon": -3.7038
+    },
+    "Athens": {
+      "city": "Athens",
+      "country": "GR",
+      "type": "hub",
+      "gateway_iata": "ATH",
+      "ferry": null,
+      "lat": 37.9838,
+      "lon": 23.7275
+    },
+    "Porto": {
+      "city": "Porto",
+      "country": "PT",
+      "type": "hub",
+      "gateway_iata": "OPO",
+      "ferry": null,
+      "lat": 41.1579,
+      "lon": -8.6291
+    },
+    "Milan": {
+      "city": "Milan",
+      "country": "IT",
+      "type": "hub",
+      "gateway_iata": "MXP",
+      "ferry": null,
+      "lat": 45.4642,
+      "lon": 9.19
+    },
+    "Vienna": {
+      "city": "Vienna",
+      "country": "AT",
+      "type": "hub",
+      "gateway_iata": "VIE",
+      "ferry": null,
+      "lat": 48.2082,
+      "lon": 16.3738
+    },
+    "Prague": {
+      "city": "Prague",
+      "country": "CZ",
+      "type": "hub",
+      "gateway_iata": "PRG",
+      "ferry": null,
+      "lat": 50.0755,
+      "lon": 14.4378
+    },
+    "Dublin": {
+      "city": "Dublin",
+      "country": "IE",
+      "type": "hub",
+      "gateway_iata": "DUB",
+      "ferry": null,
+      "lat": 53.3498,
+      "lon": -6.2603
+    },
+    "Naples": {
+      "city": "Naples",
+      "country": "IT",
+      "type": "hub",
+      "gateway_iata": "NAP",
+      "ferry": null,
+      "lat": 40.8518,
+      "lon": 14.2681
+    },
+    "Split": {
+      "city": "Split",
+      "country": "HR",
+      "type": "hub",
+      "gateway_iata": "SPU",
+      "ferry": null,
+      "lat": 43.5081,
+      "lon": 16.4402
+    },
+    "Santorini": {
+      "city": "Santorini",
+      "country": "GR",
+      "type": "island",
+      "gateway_iata": "ATH",
+      "ferry": {
+        "from_port": "Piraeus",
+        "to_port": "Santorini"
+      },
+      "lat": 36.3932,
+      "lon": 25.4615
+    },
+    "Mykonos": {
+      "city": "Mykonos",
+      "country": "GR",
+      "type": "island",
+      "gateway_iata": "ATH",
+      "ferry": {
+        "from_port": "Piraeus",
+        "to_port": "Mykonos"
+      },
+      "lat": 37.4467,
+      "lon": 25.3289
+    },
+    "Paros": {
+      "city": "Paros",
+      "country": "GR",
+      "type": "island",
+      "gateway_iata": "ATH",
+      "ferry": {
+        "from_port": "Piraeus",
+        "to_port": "Paros"
+      },
+      "lat": 37.0853,
+      "lon": 25.1522
+    },
+    "Naxos": {
+      "city": "Naxos",
+      "country": "GR",
+      "type": "island",
+      "gateway_iata": "ATH",
+      "ferry": {
+        "from_port": "Piraeus",
+        "to_port": "Naxos"
+      },
+      "lat": 37.1036,
+      "lon": 25.3766
+    },
+    "Ibiza": {
+      "city": "Ibiza",
+      "country": "ES",
+      "type": "island",
+      "gateway_iata": "BCN",
+      "ferry": {
+        "from_port": "Barcelona",
+        "to_port": "Ibiza"
+      },
+      "lat": 38.9067,
+      "lon": 1.4206
+    },
+    "Menorca": {
+      "city": "Menorca",
+      "country": "ES",
+      "type": "island",
+      "gateway_iata": "BCN",
+      "ferry": {
+        "from_port": "Barcelona",
+        "to_port": "Menorca"
+      },
+      "lat": 39.9496,
+      "lon": 4.1108
+    },
+    "Capri": {
+      "city": "Capri",
+      "country": "IT",
+      "type": "island",
+      "gateway_iata": "NAP",
+      "ferry": {
+        "from_port": "Naples",
+        "to_port": "Capri"
+      },
+      "lat": 40.5532,
+      "lon": 14.2222
+    },
+    "Hvar": {
+      "city": "Hvar",
+      "country": "HR",
+      "type": "island",
+      "gateway_iata": "SPU",
+      "ferry": {
+        "from_port": "Split",
+        "to_port": "Hvar"
+      },
+      "lat": 43.1729,
+      "lon": 16.4411
+    }
+  },
+  "tasks": [
+    {
+      "id": "T001",
+      "intent": "trip",
+      "description": "5-night trip from Manchester to Split for three, hotel rated 3.5 or higher",
+      "origin": {
+        "city": "Manchester",
+        "iata": "MAN"
+      },
+      "destination": {
+        "city": "Split",
+        "country": "HR",
+        "type": "hub",
+        "gateway_iata": "SPU",
+        "ferry": null,
+        "lat": 43.5081,
+        "lon": 16.4402
+      },
+      "depart_date": "2027-08-19",
+      "return_date": "2027-08-24",
+      "travelers": 3,
+      "budget": 2910,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1,
+        "min_hotel_rating": 3.5
+      },
+      "traveler": {
+        "name": "Alex Morgan",
+        "email": "alex.morgan@example.com"
+      }
+    },
+    {
+      "id": "T002",
+      "intent": "trip",
+      "description": "5-night trip from London to Paris for a solo traveller",
+      "origin": {
+        "city": "London",
+        "iata": "LHR"
+      },
+      "destination": {
+        "city": "Paris",
+        "country": "FR",
+        "type": "hub",
+        "gateway_iata": "CDG",
+        "ferry": null,
+        "lat": 48.8566,
+        "lon": 2.3522
+      },
+      "depart_date": "2027-07-12",
+      "return_date": "2027-07-17",
+      "travelers": 1,
+      "budget": 1230,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1
+      },
+      "traveler": {
+        "name": "Tariq Al-Mansoor",
+        "email": "tariq.almansoor@example.com"
+      }
+    },
+    {
+      "id": "T003",
+      "intent": "trip",
+      "description": "3-night trip from Edinburgh to Rome for two",
+      "origin": {
+        "city": "Edinburgh",
+        "iata": "EDI"
+      },
+      "destination": {
+        "city": "Rome",
+        "country": "IT",
+        "type": "hub",
+        "gateway_iata": "FCO",
+        "ferry": null,
+        "lat": 41.9028,
+        "lon": 12.4964
+      },
+      "depart_date": "2027-06-01",
+      "return_date": "2027-06-04",
+      "travelers": 2,
+      "budget": 2040,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1
+      },
+      "traveler": {
+        "name": "Hannah Lindqvist",
+        "email": "hannah.lindqvist@example.com"
+      }
+    },
+    {
+      "id": "T004",
+      "intent": "trip",
+      "description": "5-night trip from Edinburgh to Paros for three, with ferry transfer from Piraeus",
+      "origin": {
+        "city": "Edinburgh",
+        "iata": "EDI"
+      },
+      "destination": {
+        "city": "Paros",
+        "country": "GR",
+        "type": "island",
+        "gateway_iata": "ATH",
+        "ferry": {
+          "from_port": "Piraeus",
+          "to_port": "Paros"
+        },
+        "lat": 37.0853,
+        "lon": 25.1522
+      },
+      "depart_date": "2027-07-31",
+      "return_date": "2027-08-05",
+      "travelers": 3,
+      "budget": 4430,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1
+      },
+      "traveler": {
+        "name": "Eleanor Wright",
+        "email": "eleanor.wright@example.com"
+      }
+    },
+    {
+      "id": "T005",
+      "intent": "trip",
+      "description": "7-night trip from Edinburgh to Split for two",
+      "origin": {
+        "city": "Edinburgh",
+        "iata": "EDI"
+      },
+      "destination": {
+        "city": "Split",
+        "country": "HR",
+        "type": "hub",
+        "gateway_iata": "SPU",
+        "ferry": null,
+        "lat": 43.5081,
+        "lon": 16.4402
+      },
+      "depart_date": "2027-07-08",
+      "return_date": "2027-07-15",
+      "travelers": 2,
+      "budget": 2430,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1
+      },
+      "traveler": {
+        "name": "Chloe Dubois",
+        "email": "chloe.dubois@example.com"
+      }
+    },
+    {
+      "id": "T006",
+      "intent": "trip",
+      "description": "5-night trip from Birmingham to Milan for four",
+      "origin": {
+        "city": "Birmingham",
+        "iata": "BHX"
+      },
+      "destination": {
+        "city": "Milan",
+        "country": "IT",
+        "type": "hub",
+        "gateway_iata": "MXP",
+        "ferry": null,
+        "lat": 45.4642,
+        "lon": 9.19
+      },
+      "depart_date": "2027-04-04",
+      "return_date": "2027-04-09",
+      "travelers": 4,
+      "budget": 2850,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1
+      },
+      "traveler": {
+        "name": "Eleanor Wright",
+        "email": "eleanor.wright@example.com"
+      }
+    },
+    {
+      "id": "T007",
+      "intent": "trip",
+      "description": "3-night trip from Bristol to Milan for a solo traveller",
+      "origin": {
+        "city": "Bristol",
+        "iata": "BRS"
+      },
+      "destination": {
+        "city": "Milan",
+        "country": "IT",
+        "type": "hub",
+        "gateway_iata": "MXP",
+        "ferry": null,
+        "lat": 45.4642,
+        "lon": 9.19
+      },
+      "depart_date": "2027-05-21",
+      "return_date": "2027-05-24",
+      "travelers": 1,
+      "budget": 780,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1
+      },
+      "traveler": {
+        "name": "Eleanor Wright",
+        "email": "eleanor.wright@example.com"
+      }
+    },
+    {
+      "id": "T008",
+      "intent": "trip",
+      "description": "7-night trip from Birmingham to Menorca for four, with ferry transfer from Barcelona",
+      "origin": {
+        "city": "Birmingham",
+        "iata": "BHX"
+      },
+      "destination": {
+        "city": "Menorca",
+        "country": "ES",
+        "type": "island",
+        "gateway_iata": "BCN",
+        "ferry": {
+          "from_port": "Barcelona",
+          "to_port": "Menorca"
+        },
+        "lat": 39.9496,
+        "lon": 4.1108
+      },
+      "depart_date": "2027-08-27",
+      "return_date": "2027-09-03",
+      "travelers": 4,
+      "budget": 4290,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1
+      },
+      "traveler": {
+        "name": "Marcus Vance",
+        "email": "marcus.vance@example.com"
+      }
+    },
+    {
+      "id": "T009",
+      "intent": "trip",
+      "description": "5-night trip from Manchester to Rome for three",
+      "origin": {
+        "city": "Manchester",
+        "iata": "MAN"
+      },
+      "destination": {
+        "city": "Rome",
+        "country": "IT",
+        "type": "hub",
+        "gateway_iata": "FCO",
+        "ferry": null,
+        "lat": 41.9028,
+        "lon": 12.4964
+      },
+      "depart_date": "2027-06-13",
+      "return_date": "2027-06-18",
+      "travelers": 3,
+      "budget": 4160,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1
+      },
+      "traveler": {
+        "name": "Priya Patel",
+        "email": "priya.patel@example.com"
+      }
+    },
+    {
+      "id": "T010",
+      "intent": "trip",
+      "description": "4-night trip from Manchester to Prague for two, hotel rated 4.0 or higher",
+      "origin": {
+        "city": "Manchester",
+        "iata": "MAN"
+      },
+      "destination": {
+        "city": "Prague",
+        "country": "CZ",
+        "type": "hub",
+        "gateway_iata": "PRG",
+        "ferry": null,
+        "lat": 50.0755,
+        "lon": 14.4378
+      },
+      "depart_date": "2027-10-12",
+      "return_date": "2027-10-16",
+      "travelers": 2,
+      "budget": 1040,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1,
+        "min_hotel_rating": 4.0
+      },
+      "traveler": {
+        "name": "Liam O'Connor",
+        "email": "liam.oconnor@example.com"
+      }
+    },
+    {
+      "id": "T011",
+      "intent": "trip",
+      "description": "4-night trip from Birmingham to Madrid for two, direct flights only, hotel rated 4.0 or higher",
+      "origin": {
+        "city": "Birmingham",
+        "iata": "BHX"
+      },
+      "destination": {
+        "city": "Madrid",
+        "country": "ES",
+        "type": "hub",
+        "gateway_iata": "MAD",
+        "ferry": null,
+        "lat": 40.4168,
+        "lon": -3.7038
+      },
+      "depart_date": "2027-07-25",
+      "return_date": "2027-07-29",
+      "travelers": 2,
+      "budget": 1990,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 0,
+        "min_hotel_rating": 4.0
+      },
+      "traveler": {
+        "name": "Hannah Lindqvist",
+        "email": "hannah.lindqvist@example.com"
+      }
+    },
+    {
+      "id": "T012",
+      "intent": "trip",
+      "description": "7-night trip from Manchester to Menorca for three, with ferry transfer from Barcelona",
+      "origin": {
+        "city": "Manchester",
+        "iata": "MAN"
+      },
+      "destination": {
+        "city": "Menorca",
+        "country": "ES",
+        "type": "island",
+        "gateway_iata": "BCN",
+        "ferry": {
+          "from_port": "Barcelona",
+          "to_port": "Menorca"
+        },
+        "lat": 39.9496,
+        "lon": 4.1108
+      },
+      "depart_date": "2027-05-21",
+      "return_date": "2027-05-28",
+      "travelers": 3,
+      "budget": 3170,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1
+      },
+      "traveler": {
+        "name": "Sofia Rossi",
+        "email": "sofia.rossi@example.com"
+      }
+    },
+    {
+      "id": "T013",
+      "intent": "trip",
+      "description": "7-night trip from Birmingham to Porto for two, hotel rated 3.5 or higher",
+      "origin": {
+        "city": "Birmingham",
+        "iata": "BHX"
+      },
+      "destination": {
+        "city": "Porto",
+        "country": "PT",
+        "type": "hub",
+        "gateway_iata": "OPO",
+        "ferry": null,
+        "lat": 41.1579,
+        "lon": -8.6291
+      },
+      "depart_date": "2027-04-05",
+      "return_date": "2027-04-12",
+      "travelers": 2,
+      "budget": 1320,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1,
+        "min_hotel_rating": 3.5
+      },
+      "traveler": {
+        "name": "David Chen",
+        "email": "david.chen@example.com"
+      }
+    },
+    {
+      "id": "T014",
+      "intent": "trip",
+      "description": "3-night trip from Bristol to Porto for a solo traveller, hotel rated 3.5 or higher",
+      "origin": {
+        "city": "Bristol",
+        "iata": "BRS"
+      },
+      "destination": {
+        "city": "Porto",
+        "country": "PT",
+        "type": "hub",
+        "gateway_iata": "OPO",
+        "ferry": null,
+        "lat": 41.1579,
+        "lon": -8.6291
+      },
+      "depart_date": "2027-07-10",
+      "return_date": "2027-07-13",
+      "travelers": 1,
+      "budget": 860,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1,
+        "min_hotel_rating": 3.5
+      },
+      "traveler": {
+        "name": "Sofia Rossi",
+        "email": "sofia.rossi@example.com"
+      }
+    },
+    {
+      "id": "T015",
+      "intent": "trip",
+      "description": "4-night trip from London to Berlin for two, direct flights only",
+      "origin": {
+        "city": "London",
+        "iata": "LHR"
+      },
+      "destination": {
+        "city": "Berlin",
+        "country": "DE",
+        "type": "hub",
+        "gateway_iata": "BER",
+        "ferry": null,
+        "lat": 52.52,
+        "lon": 13.405
+      },
+      "depart_date": "2027-08-31",
+      "return_date": "2027-09-04",
+      "travelers": 2,
+      "budget": 1380,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 0
+      },
+      "traveler": {
+        "name": "Marcus Vance",
+        "email": "marcus.vance@example.com"
+      }
+    },
+    {
+      "id": "T016",
+      "intent": "trip",
+      "description": "7-night trip from London to Mykonos for two, with ferry transfer from Piraeus",
+      "origin": {
+        "city": "London",
+        "iata": "LHR"
+      },
+      "destination": {
+        "city": "Mykonos",
+        "country": "GR",
+        "type": "island",
+        "gateway_iata": "ATH",
+        "ferry": {
+          "from_port": "Piraeus",
+          "to_port": "Mykonos"
+        },
+        "lat": 37.4467,
+        "lon": 25.3289
+      },
+      "depart_date": "2027-09-22",
+      "return_date": "2027-09-29",
+      "travelers": 2,
+      "budget": 2890,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1
+      },
+      "traveler": {
+        "name": "Marcus Vance",
+        "email": "marcus.vance@example.com"
+      }
+    },
+    {
+      "id": "T017",
+      "intent": "trip",
+      "description": "4-night trip from Manchester to Lisbon for two",
+      "origin": {
+        "city": "Manchester",
+        "iata": "MAN"
+      },
+      "destination": {
+        "city": "Lisbon",
+        "country": "PT",
+        "type": "hub",
+        "gateway_iata": "LIS",
+        "ferry": null,
+        "lat": 38.7223,
+        "lon": -9.1393
+      },
+      "depart_date": "2027-07-07",
+      "return_date": "2027-07-11",
+      "travelers": 2,
+      "budget": 1440,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1
+      },
+      "traveler": {
+        "name": "Tariq Al-Mansoor",
+        "email": "tariq.almansoor@example.com"
+      }
+    },
+    {
+      "id": "T018",
+      "intent": "trip",
+      "description": "4-night trip from London to Dublin for two, direct flights only",
+      "origin": {
+        "city": "London",
+        "iata": "LHR"
+      },
+      "destination": {
+        "city": "Dublin",
+        "country": "IE",
+        "type": "hub",
+        "gateway_iata": "DUB",
+        "ferry": null,
+        "lat": 53.3498,
+        "lon": -6.2603
+      },
+      "depart_date": "2027-05-06",
+      "return_date": "2027-05-10",
+      "travelers": 2,
+      "budget": 950,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 0
+      },
+      "traveler": {
+        "name": "Chloe Dubois",
+        "email": "chloe.dubois@example.com"
+      }
+    },
+    {
+      "id": "T019",
+      "intent": "trip",
+      "description": "4-night trip from Bristol to Amsterdam for two, direct flights only",
+      "origin": {
+        "city": "Bristol",
+        "iata": "BRS"
+      },
+      "destination": {
+        "city": "Amsterdam",
+        "country": "NL",
+        "type": "hub",
+        "gateway_iata": "AMS",
+        "ferry": null,
+        "lat": 52.3676,
+        "lon": 4.9041
+      },
+      "depart_date": "2027-06-13",
+      "return_date": "2027-06-17",
+      "travelers": 2,
+      "budget": 1450,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 0
+      },
+      "traveler": {
+        "name": "David Chen",
+        "email": "david.chen@example.com"
+      }
+    },
+    {
+      "id": "T020",
+      "intent": "trip",
+      "description": "3-night trip from Edinburgh to Naxos for four, with ferry transfer from Piraeus, hotel rated 4.0 or higher",
+      "origin": {
+        "city": "Edinburgh",
+        "iata": "EDI"
+      },
+      "destination": {
+        "city": "Naxos",
+        "country": "GR",
+        "type": "island",
+        "gateway_iata": "ATH",
+        "ferry": {
+          "from_port": "Piraeus",
+          "to_port": "Naxos"
+        },
+        "lat": 37.1036,
+        "lon": 25.3766
+      },
+      "depart_date": "2027-09-19",
+      "return_date": "2027-09-22",
+      "travelers": 4,
+      "budget": 4150,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1,
+        "min_hotel_rating": 4.0
+      },
+      "traveler": {
+        "name": "Hannah Lindqvist",
+        "email": "hannah.lindqvist@example.com"
+      }
+    },
+    {
+      "id": "T021",
+      "intent": "trip",
+      "description": "5-night trip from London to Rome for two, direct flights only, hotel rated 3.5 or higher",
+      "origin": {
+        "city": "London",
+        "iata": "LHR"
+      },
+      "destination": {
+        "city": "Rome",
+        "country": "IT",
+        "type": "hub",
+        "gateway_iata": "FCO",
+        "ferry": null,
+        "lat": 41.9028,
+        "lon": 12.4964
+      },
+      "depart_date": "2027-05-23",
+      "return_date": "2027-05-28",
+      "travelers": 2,
+      "budget": 1600,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 0,
+        "min_hotel_rating": 3.5
+      },
+      "traveler": {
+        "name": "Eleanor Wright",
+        "email": "eleanor.wright@example.com"
+      }
+    },
+    {
+      "id": "T022",
+      "intent": "trip",
+      "description": "3-night trip from Manchester to Dublin for three, direct flights only",
+      "origin": {
+        "city": "Manchester",
+        "iata": "MAN"
+      },
+      "destination": {
+        "city": "Dublin",
+        "country": "IE",
+        "type": "hub",
+        "gateway_iata": "DUB",
+        "ferry": null,
+        "lat": 53.3498,
+        "lon": -6.2603
+      },
+      "depart_date": "2027-06-02",
+      "return_date": "2027-06-05",
+      "travelers": 3,
+      "budget": 1500,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 0
+      },
+      "traveler": {
+        "name": "Eleanor Wright",
+        "email": "eleanor.wright@example.com"
+      }
+    },
+    {
+      "id": "T023",
+      "intent": "trip",
+      "description": "3-night trip from Manchester to Porto for two, direct flights only",
+      "origin": {
+        "city": "Manchester",
+        "iata": "MAN"
+      },
+      "destination": {
+        "city": "Porto",
+        "country": "PT",
+        "type": "hub",
+        "gateway_iata": "OPO",
+        "ferry": null,
+        "lat": 41.1579,
+        "lon": -8.6291
+      },
+      "depart_date": "2027-04-20",
+      "return_date": "2027-04-23",
+      "travelers": 2,
+      "budget": 1260,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 0
+      },
+      "traveler": {
+        "name": "Chloe Dubois",
+        "email": "chloe.dubois@example.com"
+      }
+    },
+    {
+      "id": "T024",
+      "intent": "trip",
+      "description": "5-night trip from Manchester to Santorini for two, with ferry transfer from Piraeus",
+      "origin": {
+        "city": "Manchester",
+        "iata": "MAN"
+      },
+      "destination": {
+        "city": "Santorini",
+        "country": "GR",
+        "type": "island",
+        "gateway_iata": "ATH",
+        "ferry": {
+          "from_port": "Piraeus",
+          "to_port": "Santorini"
+        },
+        "lat": 36.3932,
+        "lon": 25.4615
+      },
+      "depart_date": "2027-05-06",
+      "return_date": "2027-05-11",
+      "travelers": 2,
+      "budget": 2450,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1
+      },
+      "traveler": {
+        "name": "Tariq Al-Mansoor",
+        "email": "tariq.almansoor@example.com"
+      }
+    },
+    {
+      "id": "T025",
+      "intent": "trip",
+      "description": "5-night trip from Manchester to Milan for two, direct flights only, hotel rated 4.0 or higher",
+      "origin": {
+        "city": "Manchester",
+        "iata": "MAN"
+      },
+      "destination": {
+        "city": "Milan",
+        "country": "IT",
+        "type": "hub",
+        "gateway_iata": "MXP",
+        "ferry": null,
+        "lat": 45.4642,
+        "lon": 9.19
+      },
+      "depart_date": "2027-06-18",
+      "return_date": "2027-06-23",
+      "travelers": 2,
+      "budget": 2610,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 0,
+        "min_hotel_rating": 4.0
+      },
+      "traveler": {
+        "name": "Marcus Vance",
+        "email": "marcus.vance@example.com"
+      }
+    },
+    {
+      "id": "T026",
+      "intent": "trip",
+      "description": "3-night trip from Edinburgh to Berlin for two, direct flights only",
+      "origin": {
+        "city": "Edinburgh",
+        "iata": "EDI"
+      },
+      "destination": {
+        "city": "Berlin",
+        "country": "DE",
+        "type": "hub",
+        "gateway_iata": "BER",
+        "ferry": null,
+        "lat": 52.52,
+        "lon": 13.405
+      },
+      "depart_date": "2027-09-07",
+      "return_date": "2027-09-10",
+      "travelers": 2,
+      "budget": 1040,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 0
+      },
+      "traveler": {
+        "name": "Tariq Al-Mansoor",
+        "email": "tariq.almansoor@example.com"
+      }
+    },
+    {
+      "id": "T027",
+      "intent": "trip",
+      "description": "7-night trip from Edinburgh to Naples for two, direct flights only",
+      "origin": {
+        "city": "Edinburgh",
+        "iata": "EDI"
+      },
+      "destination": {
+        "city": "Naples",
+        "country": "IT",
+        "type": "hub",
+        "gateway_iata": "NAP",
+        "ferry": null,
+        "lat": 40.8518,
+        "lon": 14.2681
+      },
+      "depart_date": "2027-06-13",
+      "return_date": "2027-06-20",
+      "travelers": 2,
+      "budget": 2710,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 0
+      },
+      "traveler": {
+        "name": "Alex Morgan",
+        "email": "alex.morgan@example.com"
+      }
+    },
+    {
+      "id": "T028",
+      "intent": "trip",
+      "description": "7-night trip from Birmingham to Ibiza for four, with ferry transfer from Barcelona",
+      "origin": {
+        "city": "Birmingham",
+        "iata": "BHX"
+      },
+      "destination": {
+        "city": "Ibiza",
+        "country": "ES",
+        "type": "island",
+        "gateway_iata": "BCN",
+        "ferry": {
+          "from_port": "Barcelona",
+          "to_port": "Ibiza"
+        },
+        "lat": 38.9067,
+        "lon": 1.4206
+      },
+      "depart_date": "2027-06-02",
+      "return_date": "2027-06-09",
+      "travelers": 4,
+      "budget": 5330,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1
+      },
+      "traveler": {
+        "name": "Chloe Dubois",
+        "email": "chloe.dubois@example.com"
+      }
+    },
+    {
+      "id": "T029",
+      "intent": "trip",
+      "description": "7-night trip from Edinburgh to Barcelona for a solo traveller",
+      "origin": {
+        "city": "Edinburgh",
+        "iata": "EDI"
+      },
+      "destination": {
+        "city": "Barcelona",
+        "country": "ES",
+        "type": "hub",
+        "gateway_iata": "BCN",
+        "ferry": null,
+        "lat": 41.3874,
+        "lon": 2.1686
+      },
+      "depart_date": "2027-08-30",
+      "return_date": "2027-09-06",
+      "travelers": 1,
+      "budget": 1450,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1
+      },
+      "traveler": {
+        "name": "Chloe Dubois",
+        "email": "chloe.dubois@example.com"
+      }
+    },
+    {
+      "id": "T030",
+      "intent": "trip",
+      "description": "4-night trip from Manchester to Barcelona for four, hotel rated 4.0 or higher",
+      "origin": {
+        "city": "Manchester",
+        "iata": "MAN"
+      },
+      "destination": {
+        "city": "Barcelona",
+        "country": "ES",
+        "type": "hub",
+        "gateway_iata": "BCN",
+        "ferry": null,
+        "lat": 41.3874,
+        "lon": 2.1686
+      },
+      "depart_date": "2027-07-13",
+      "return_date": "2027-07-17",
+      "travelers": 4,
+      "budget": 3910,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1,
+        "min_hotel_rating": 4.0
+      },
+      "traveler": {
+        "name": "Eleanor Wright",
+        "email": "eleanor.wright@example.com"
+      }
+    },
+    {
+      "id": "T031",
+      "intent": "trip",
+      "description": "5-night trip from Bristol to Berlin for three, direct flights only, hotel rated 4.0 or higher",
+      "origin": {
+        "city": "Bristol",
+        "iata": "BRS"
+      },
+      "destination": {
+        "city": "Berlin",
+        "country": "DE",
+        "type": "hub",
+        "gateway_iata": "BER",
+        "ferry": null,
+        "lat": 52.52,
+        "lon": 13.405
+      },
+      "depart_date": "2027-04-25",
+      "return_date": "2027-04-30",
+      "travelers": 3,
+      "budget": 3240,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 0,
+        "min_hotel_rating": 4.0
+      },
+      "traveler": {
+        "name": "Liam O'Connor",
+        "email": "liam.oconnor@example.com"
+      }
+    },
+    {
+      "id": "T032",
+      "intent": "trip",
+      "description": "4-night trip from Birmingham to Capri for a solo traveller, with ferry transfer from Naples",
+      "origin": {
+        "city": "Birmingham",
+        "iata": "BHX"
+      },
+      "destination": {
+        "city": "Capri",
+        "country": "IT",
+        "type": "island",
+        "gateway_iata": "NAP",
+        "ferry": {
+          "from_port": "Naples",
+          "to_port": "Capri"
+        },
+        "lat": 40.5532,
+        "lon": 14.2222
+      },
+      "depart_date": "2027-07-10",
+      "return_date": "2027-07-14",
+      "travelers": 1,
+      "budget": 1390,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1
+      },
+      "traveler": {
+        "name": "Tariq Al-Mansoor",
+        "email": "tariq.almansoor@example.com"
+      }
+    },
+    {
+      "id": "T033",
+      "intent": "trip",
+      "description": "5-night trip from Birmingham to Barcelona for three",
+      "origin": {
+        "city": "Birmingham",
+        "iata": "BHX"
+      },
+      "destination": {
+        "city": "Barcelona",
+        "country": "ES",
+        "type": "hub",
+        "gateway_iata": "BCN",
+        "ferry": null,
+        "lat": 41.3874,
+        "lon": 2.1686
+      },
+      "depart_date": "2027-08-07",
+      "return_date": "2027-08-12",
+      "travelers": 3,
+      "budget": 3150,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1
+      },
+      "traveler": {
+        "name": "Liam O'Connor",
+        "email": "liam.oconnor@example.com"
+      }
+    },
+    {
+      "id": "T034",
+      "intent": "trip",
+      "description": "5-night trip from London to Milan for a solo traveller",
+      "origin": {
+        "city": "London",
+        "iata": "LHR"
+      },
+      "destination": {
+        "city": "Milan",
+        "country": "IT",
+        "type": "hub",
+        "gateway_iata": "MXP",
+        "ferry": null,
+        "lat": 45.4642,
+        "lon": 9.19
+      },
+      "depart_date": "2027-05-30",
+      "return_date": "2027-06-04",
+      "travelers": 1,
+      "budget": 890,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1
+      },
+      "traveler": {
+        "name": "Marcus Vance",
+        "email": "marcus.vance@example.com"
+      }
+    },
+    {
+      "id": "T035",
+      "intent": "trip",
+      "description": "7-night trip from London to Barcelona for a solo traveller, direct flights only",
+      "origin": {
+        "city": "London",
+        "iata": "LHR"
+      },
+      "destination": {
+        "city": "Barcelona",
+        "country": "ES",
+        "type": "hub",
+        "gateway_iata": "BCN",
+        "ferry": null,
+        "lat": 41.3874,
+        "lon": 2.1686
+      },
+      "depart_date": "2027-04-24",
+      "return_date": "2027-05-01",
+      "travelers": 1,
+      "budget": 1320,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 0
+      },
+      "traveler": {
+        "name": "Alex Morgan",
+        "email": "alex.morgan@example.com"
+      }
+    },
+    {
+      "id": "T036",
+      "intent": "trip",
+      "description": "7-night trip from Edinburgh to Mykonos for two, with ferry transfer from Piraeus, hotel rated 4.0 or higher",
+      "origin": {
+        "city": "Edinburgh",
+        "iata": "EDI"
+      },
+      "destination": {
+        "city": "Mykonos",
+        "country": "GR",
+        "type": "island",
+        "gateway_iata": "ATH",
+        "ferry": {
+          "from_port": "Piraeus",
+          "to_port": "Mykonos"
+        },
+        "lat": 37.4467,
+        "lon": 25.3289
+      },
+      "depart_date": "2027-07-20",
+      "return_date": "2027-07-27",
+      "travelers": 2,
+      "budget": 4620,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1,
+        "min_hotel_rating": 4.0
+      },
+      "traveler": {
+        "name": "Liam O'Connor",
+        "email": "liam.oconnor@example.com"
+      }
+    },
+    {
+      "id": "T037",
+      "intent": "trip",
+      "description": "7-night trip from Manchester to Madrid for two, hotel rated 3.5 or higher",
+      "origin": {
+        "city": "Manchester",
+        "iata": "MAN"
+      },
+      "destination": {
+        "city": "Madrid",
+        "country": "ES",
+        "type": "hub",
+        "gateway_iata": "MAD",
+        "ferry": null,
+        "lat": 40.4168,
+        "lon": -3.7038
+      },
+      "depart_date": "2027-09-27",
+      "return_date": "2027-10-04",
+      "travelers": 2,
+      "budget": 1510,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1,
+        "min_hotel_rating": 3.5
+      },
+      "traveler": {
+        "name": "Liam O'Connor",
+        "email": "liam.oconnor@example.com"
+      }
+    },
+    {
+      "id": "T038",
+      "intent": "trip",
+      "description": "3-night trip from Bristol to Barcelona for a solo traveller, direct flights only",
+      "origin": {
+        "city": "Bristol",
+        "iata": "BRS"
+      },
+      "destination": {
+        "city": "Barcelona",
+        "country": "ES",
+        "type": "hub",
+        "gateway_iata": "BCN",
+        "ferry": null,
+        "lat": 41.3874,
+        "lon": 2.1686
+      },
+      "depart_date": "2027-09-17",
+      "return_date": "2027-09-20",
+      "travelers": 1,
+      "budget": 710,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 0
+      },
+      "traveler": {
+        "name": "Tariq Al-Mansoor",
+        "email": "tariq.almansoor@example.com"
+      }
+    },
+    {
+      "id": "T039",
+      "intent": "trip",
+      "description": "4-night trip from Edinburgh to Milan for three",
+      "origin": {
+        "city": "Edinburgh",
+        "iata": "EDI"
+      },
+      "destination": {
+        "city": "Milan",
+        "country": "IT",
+        "type": "hub",
+        "gateway_iata": "MXP",
+        "ferry": null,
+        "lat": 45.4642,
+        "lon": 9.19
+      },
+      "depart_date": "2027-10-17",
+      "return_date": "2027-10-21",
+      "travelers": 3,
+      "budget": 1840,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1
+      },
+      "traveler": {
+        "name": "Priya Patel",
+        "email": "priya.patel@example.com"
+      }
+    },
+    {
+      "id": "T040",
+      "intent": "trip",
+      "description": "4-night trip from Edinburgh to Santorini for a solo traveller, with ferry transfer from Piraeus",
+      "origin": {
+        "city": "Edinburgh",
+        "iata": "EDI"
+      },
+      "destination": {
+        "city": "Santorini",
+        "country": "GR",
+        "type": "island",
+        "gateway_iata": "ATH",
+        "ferry": {
+          "from_port": "Piraeus",
+          "to_port": "Santorini"
+        },
+        "lat": 36.3932,
+        "lon": 25.4615
+      },
+      "depart_date": "2027-08-06",
+      "return_date": "2027-08-10",
+      "travelers": 1,
+      "budget": 1910,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1
+      },
+      "traveler": {
+        "name": "Chloe Dubois",
+        "email": "chloe.dubois@example.com"
+      }
+    },
+    {
+      "id": "T041",
+      "intent": "trip",
+      "description": "3-night trip from Edinburgh to Paris for two",
+      "origin": {
+        "city": "Edinburgh",
+        "iata": "EDI"
+      },
+      "destination": {
+        "city": "Paris",
+        "country": "FR",
+        "type": "hub",
+        "gateway_iata": "CDG",
+        "ferry": null,
+        "lat": 48.8566,
+        "lon": 2.3522
+      },
+      "depart_date": "2027-06-28",
+      "return_date": "2027-07-01",
+      "travelers": 2,
+      "budget": 1050,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1
+      },
+      "traveler": {
+        "name": "Hannah Lindqvist",
+        "email": "hannah.lindqvist@example.com"
+      }
+    },
+    {
+      "id": "T042",
+      "intent": "trip",
+      "description": "3-night trip from Birmingham to Paris for three",
+      "origin": {
+        "city": "Birmingham",
+        "iata": "BHX"
+      },
+      "destination": {
+        "city": "Paris",
+        "country": "FR",
+        "type": "hub",
+        "gateway_iata": "CDG",
+        "ferry": null,
+        "lat": 48.8566,
+        "lon": 2.3522
+      },
+      "depart_date": "2027-07-24",
+      "return_date": "2027-07-27",
+      "travelers": 3,
+      "budget": 1650,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1
+      },
+      "traveler": {
+        "name": "Sofia Rossi",
+        "email": "sofia.rossi@example.com"
+      }
+    },
+    {
+      "id": "T043",
+      "intent": "trip",
+      "description": "7-night trip from Edinburgh to Dublin for two, direct flights only",
+      "origin": {
+        "city": "Edinburgh",
+        "iata": "EDI"
+      },
+      "destination": {
+        "city": "Dublin",
+        "country": "IE",
+        "type": "hub",
+        "gateway_iata": "DUB",
+        "ferry": null,
+        "lat": 53.3498,
+        "lon": -6.2603
+      },
+      "depart_date": "2027-06-17",
+      "return_date": "2027-06-24",
+      "travelers": 2,
+      "budget": 1660,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 0
+      },
+      "traveler": {
+        "name": "Alex Morgan",
+        "email": "alex.morgan@example.com"
+      }
+    },
+    {
+      "id": "T044",
+      "intent": "trip",
+      "description": "3-night trip from Bristol to Capri for two, with ferry transfer from Naples",
+      "origin": {
+        "city": "Bristol",
+        "iata": "BRS"
+      },
+      "destination": {
+        "city": "Capri",
+        "country": "IT",
+        "type": "island",
+        "gateway_iata": "NAP",
+        "ferry": {
+          "from_port": "Naples",
+          "to_port": "Capri"
+        },
+        "lat": 40.5532,
+        "lon": 14.2222
+      },
+      "depart_date": "2027-06-03",
+      "return_date": "2027-06-06",
+      "travelers": 2,
+      "budget": 2140,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1
+      },
+      "traveler": {
+        "name": "Alex Morgan",
+        "email": "alex.morgan@example.com"
+      }
+    },
+    {
+      "id": "T045",
+      "intent": "trip",
+      "description": "4-night trip from Birmingham to Rome for two",
+      "origin": {
+        "city": "Birmingham",
+        "iata": "BHX"
+      },
+      "destination": {
+        "city": "Rome",
+        "country": "IT",
+        "type": "hub",
+        "gateway_iata": "FCO",
+        "ferry": null,
+        "lat": 41.9028,
+        "lon": 12.4964
+      },
+      "depart_date": "2027-08-30",
+      "return_date": "2027-09-03",
+      "travelers": 2,
+      "budget": 2100,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1
+      },
+      "traveler": {
+        "name": "Marcus Vance",
+        "email": "marcus.vance@example.com"
+      }
+    },
+    {
+      "id": "T046",
+      "intent": "trip",
+      "description": "3-night trip from Edinburgh to Madrid for two",
+      "origin": {
+        "city": "Edinburgh",
+        "iata": "EDI"
+      },
+      "destination": {
+        "city": "Madrid",
+        "country": "ES",
+        "type": "hub",
+        "gateway_iata": "MAD",
+        "ferry": null,
+        "lat": 40.4168,
+        "lon": -3.7038
+      },
+      "depart_date": "2027-08-13",
+      "return_date": "2027-08-16",
+      "travelers": 2,
+      "budget": 1690,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1
+      },
+      "traveler": {
+        "name": "Hannah Lindqvist",
+        "email": "hannah.lindqvist@example.com"
+      }
+    },
+    {
+      "id": "T047",
+      "intent": "trip",
+      "description": "3-night trip from Birmingham to Prague for three, direct flights only",
+      "origin": {
+        "city": "Birmingham",
+        "iata": "BHX"
+      },
+      "destination": {
+        "city": "Prague",
+        "country": "CZ",
+        "type": "hub",
+        "gateway_iata": "PRG",
+        "ferry": null,
+        "lat": 50.0755,
+        "lon": 14.4378
+      },
+      "depart_date": "2027-05-15",
+      "return_date": "2027-05-18",
+      "travelers": 3,
+      "budget": 1620,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 0
+      },
+      "traveler": {
+        "name": "Liam O'Connor",
+        "email": "liam.oconnor@example.com"
+      }
+    },
+    {
+      "id": "T048",
+      "intent": "trip",
+      "description": "4-night trip from London to Ibiza for four, with ferry transfer from Barcelona, hotel rated 4.0 or higher",
+      "origin": {
+        "city": "London",
+        "iata": "LHR"
+      },
+      "destination": {
+        "city": "Ibiza",
+        "country": "ES",
+        "type": "island",
+        "gateway_iata": "BCN",
+        "ferry": {
+          "from_port": "Barcelona",
+          "to_port": "Ibiza"
+        },
+        "lat": 38.9067,
+        "lon": 1.4206
+      },
+      "depart_date": "2027-04-15",
+      "return_date": "2027-04-19",
+      "travelers": 4,
+      "budget": 3340,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1,
+        "min_hotel_rating": 4.0
+      },
+      "traveler": {
+        "name": "Chloe Dubois",
+        "email": "chloe.dubois@example.com"
+      }
+    },
+    {
+      "id": "T049",
+      "intent": "trip",
+      "description": "3-night trip from Manchester to Paris for three, hotel rated 4.0 or higher",
+      "origin": {
+        "city": "Manchester",
+        "iata": "MAN"
+      },
+      "destination": {
+        "city": "Paris",
+        "country": "FR",
+        "type": "hub",
+        "gateway_iata": "CDG",
+        "ferry": null,
+        "lat": 48.8566,
+        "lon": 2.3522
+      },
+      "depart_date": "2027-05-07",
+      "return_date": "2027-05-10",
+      "travelers": 3,
+      "budget": 2020,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1,
+        "min_hotel_rating": 4.0
+      },
+      "traveler": {
+        "name": "Priya Patel",
+        "email": "priya.patel@example.com"
+      }
+    },
+    {
+      "id": "T050",
+      "intent": "trip",
+      "description": "4-night trip from Bristol to Naples for two, hotel rated 3.5 or higher",
+      "origin": {
+        "city": "Bristol",
+        "iata": "BRS"
+      },
+      "destination": {
+        "city": "Naples",
+        "country": "IT",
+        "type": "hub",
+        "gateway_iata": "NAP",
+        "ferry": null,
+        "lat": 40.8518,
+        "lon": 14.2681
+      },
+      "depart_date": "2027-06-01",
+      "return_date": "2027-06-05",
+      "travelers": 2,
+      "budget": 2120,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1,
+        "min_hotel_rating": 3.5
+      },
+      "traveler": {
+        "name": "Hannah Lindqvist",
+        "email": "hannah.lindqvist@example.com"
+      }
+    },
+    {
+      "id": "T051",
+      "intent": "trip",
+      "description": "5-night trip from Edinburgh to Athens for a solo traveller",
+      "origin": {
+        "city": "Edinburgh",
+        "iata": "EDI"
+      },
+      "destination": {
+        "city": "Athens",
+        "country": "GR",
+        "type": "hub",
+        "gateway_iata": "ATH",
+        "ferry": null,
+        "lat": 37.9838,
+        "lon": 23.7275
+      },
+      "depart_date": "2027-04-15",
+      "return_date": "2027-04-20",
+      "travelers": 1,
+      "budget": 1200,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1
+      },
+      "traveler": {
+        "name": "David Chen",
+        "email": "david.chen@example.com"
+      }
+    },
+    {
+      "id": "T052",
+      "intent": "trip",
+      "description": "3-night trip from Birmingham to Santorini for a solo traveller, with ferry transfer from Piraeus",
+      "origin": {
+        "city": "Birmingham",
+        "iata": "BHX"
+      },
+      "destination": {
+        "city": "Santorini",
+        "country": "GR",
+        "type": "island",
+        "gateway_iata": "ATH",
+        "ferry": {
+          "from_port": "Piraeus",
+          "to_port": "Santorini"
+        },
+        "lat": 36.3932,
+        "lon": 25.4615
+      },
+      "depart_date": "2027-06-19",
+      "return_date": "2027-06-22",
+      "travelers": 1,
+      "budget": 1750,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1
+      },
+      "traveler": {
+        "name": "Tariq Al-Mansoor",
+        "email": "tariq.almansoor@example.com"
+      }
+    },
+    {
+      "id": "T053",
+      "intent": "trip",
+      "description": "5-night trip from Birmingham to Vienna for four",
+      "origin": {
+        "city": "Birmingham",
+        "iata": "BHX"
+      },
+      "destination": {
+        "city": "Vienna",
+        "country": "AT",
+        "type": "hub",
+        "gateway_iata": "VIE",
+        "ferry": null,
+        "lat": 48.2082,
+        "lon": 16.3738
+      },
+      "depart_date": "2027-06-20",
+      "return_date": "2027-06-25",
+      "travelers": 4,
+      "budget": 3380,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1
+      },
+      "traveler": {
+        "name": "Eleanor Wright",
+        "email": "eleanor.wright@example.com"
+      }
+    },
+    {
+      "id": "T054",
+      "intent": "trip",
+      "description": "3-night trip from Bristol to Athens for two",
+      "origin": {
+        "city": "Bristol",
+        "iata": "BRS"
+      },
+      "destination": {
+        "city": "Athens",
+        "country": "GR",
+        "type": "hub",
+        "gateway_iata": "ATH",
+        "ferry": null,
+        "lat": 37.9838,
+        "lon": 23.7275
+      },
+      "depart_date": "2027-09-23",
+      "return_date": "2027-09-26",
+      "travelers": 2,
+      "budget": 1810,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1
+      },
+      "traveler": {
+        "name": "Tariq Al-Mansoor",
+        "email": "tariq.almansoor@example.com"
+      }
+    },
+    {
+      "id": "T055",
+      "intent": "trip",
+      "description": "5-night trip from London to Amsterdam for two, hotel rated 4.0 or higher",
+      "origin": {
+        "city": "London",
+        "iata": "LHR"
+      },
+      "destination": {
+        "city": "Amsterdam",
+        "country": "NL",
+        "type": "hub",
+        "gateway_iata": "AMS",
+        "ferry": null,
+        "lat": 52.3676,
+        "lon": 4.9041
+      },
+      "depart_date": "2027-08-11",
+      "return_date": "2027-08-16",
+      "travelers": 2,
+      "budget": 1830,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1,
+        "min_hotel_rating": 4.0
+      },
+      "traveler": {
+        "name": "Tariq Al-Mansoor",
+        "email": "tariq.almansoor@example.com"
+      }
+    },
+    {
+      "id": "T056",
+      "intent": "trip",
+      "description": "4-night trip from Bristol to Ibiza for a solo traveller, with ferry transfer from Barcelona, hotel rated 4.0 or higher",
+      "origin": {
+        "city": "Bristol",
+        "iata": "BRS"
+      },
+      "destination": {
+        "city": "Ibiza",
+        "country": "ES",
+        "type": "island",
+        "gateway_iata": "BCN",
+        "ferry": {
+          "from_port": "Barcelona",
+          "to_port": "Ibiza"
+        },
+        "lat": 38.9067,
+        "lon": 1.4206
+      },
+      "depart_date": "2027-08-19",
+      "return_date": "2027-08-23",
+      "travelers": 1,
+      "budget": 1510,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1,
+        "min_hotel_rating": 4.0
+      },
+      "traveler": {
+        "name": "Chloe Dubois",
+        "email": "chloe.dubois@example.com"
+      }
+    },
+    {
+      "id": "T057",
+      "intent": "trip",
+      "description": "3-night trip from Bristol to Paris for a solo traveller, direct flights only",
+      "origin": {
+        "city": "Bristol",
+        "iata": "BRS"
+      },
+      "destination": {
+        "city": "Paris",
+        "country": "FR",
+        "type": "hub",
+        "gateway_iata": "CDG",
+        "ferry": null,
+        "lat": 48.8566,
+        "lon": 2.3522
+      },
+      "depart_date": "2027-04-11",
+      "return_date": "2027-04-14",
+      "travelers": 1,
+      "budget": 680,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 0
+      },
+      "traveler": {
+        "name": "Tariq Al-Mansoor",
+        "email": "tariq.almansoor@example.com"
+      }
+    },
+    {
+      "id": "T058",
+      "intent": "trip",
+      "description": "4-night trip from Edinburgh to Lisbon for two, direct flights only",
+      "origin": {
+        "city": "Edinburgh",
+        "iata": "EDI"
+      },
+      "destination": {
+        "city": "Lisbon",
+        "country": "PT",
+        "type": "hub",
+        "gateway_iata": "LIS",
+        "ferry": null,
+        "lat": 38.7223,
+        "lon": -9.1393
+      },
+      "depart_date": "2027-04-03",
+      "return_date": "2027-04-07",
+      "travelers": 2,
+      "budget": 1690,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 0
+      },
+      "traveler": {
+        "name": "Priya Patel",
+        "email": "priya.patel@example.com"
+      }
+    },
+    {
+      "id": "T059",
+      "intent": "trip",
+      "description": "4-night trip from Bristol to Prague for two",
+      "origin": {
+        "city": "Bristol",
+        "iata": "BRS"
+      },
+      "destination": {
+        "city": "Prague",
+        "country": "CZ",
+        "type": "hub",
+        "gateway_iata": "PRG",
+        "ferry": null,
+        "lat": 50.0755,
+        "lon": 14.4378
+      },
+      "depart_date": "2027-07-11",
+      "return_date": "2027-07-15",
+      "travelers": 2,
+      "budget": 1180,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1
+      },
+      "traveler": {
+        "name": "Liam O'Connor",
+        "email": "liam.oconnor@example.com"
+      }
+    },
+    {
+      "id": "T060",
+      "intent": "trip",
+      "description": "5-night trip from London to Menorca for two, with ferry transfer from Barcelona, hotel rated 3.5 or higher",
+      "origin": {
+        "city": "London",
+        "iata": "LHR"
+      },
+      "destination": {
+        "city": "Menorca",
+        "country": "ES",
+        "type": "island",
+        "gateway_iata": "BCN",
+        "ferry": {
+          "from_port": "Barcelona",
+          "to_port": "Menorca"
+        },
+        "lat": 39.9496,
+        "lon": 4.1108
+      },
+      "depart_date": "2027-09-09",
+      "return_date": "2027-09-14",
+      "travelers": 2,
+      "budget": 1470,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1,
+        "min_hotel_rating": 3.5
+      },
+      "traveler": {
+        "name": "Marcus Vance",
+        "email": "marcus.vance@example.com"
+      }
+    },
+    {
+      "id": "T061",
+      "intent": "trip",
+      "description": "5-night trip from Birmingham to Athens for two, hotel rated 4.0 or higher",
+      "origin": {
+        "city": "Birmingham",
+        "iata": "BHX"
+      },
+      "destination": {
+        "city": "Athens",
+        "country": "GR",
+        "type": "hub",
+        "gateway_iata": "ATH",
+        "ferry": null,
+        "lat": 37.9838,
+        "lon": 23.7275
+      },
+      "depart_date": "2027-06-22",
+      "return_date": "2027-06-27",
+      "travelers": 2,
+      "budget": 2680,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1,
+        "min_hotel_rating": 4.0
+      },
+      "traveler": {
+        "name": "Hannah Lindqvist",
+        "email": "hannah.lindqvist@example.com"
+      }
+    },
+    {
+      "id": "T062",
+      "intent": "trip",
+      "description": "5-night trip from Edinburgh to Vienna for two",
+      "origin": {
+        "city": "Edinburgh",
+        "iata": "EDI"
+      },
+      "destination": {
+        "city": "Vienna",
+        "country": "AT",
+        "type": "hub",
+        "gateway_iata": "VIE",
+        "ferry": null,
+        "lat": 48.2082,
+        "lon": 16.3738
+      },
+      "depart_date": "2027-09-27",
+      "return_date": "2027-10-02",
+      "travelers": 2,
+      "budget": 1510,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1
+      },
+      "traveler": {
+        "name": "Eleanor Wright",
+        "email": "eleanor.wright@example.com"
+      }
+    },
+    {
+      "id": "T063",
+      "intent": "trip",
+      "description": "5-night trip from Birmingham to Naples for a solo traveller",
+      "origin": {
+        "city": "Birmingham",
+        "iata": "BHX"
+      },
+      "destination": {
+        "city": "Naples",
+        "country": "IT",
+        "type": "hub",
+        "gateway_iata": "NAP",
+        "ferry": null,
+        "lat": 40.8518,
+        "lon": 14.2681
+      },
+      "depart_date": "2027-10-06",
+      "return_date": "2027-10-11",
+      "travelers": 1,
+      "budget": 820,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1
+      },
+      "traveler": {
+        "name": "Chloe Dubois",
+        "email": "chloe.dubois@example.com"
+      }
+    },
+    {
+      "id": "T064",
+      "intent": "trip",
+      "description": "4-night trip from Edinburgh to Menorca for four, with ferry transfer from Barcelona",
+      "origin": {
+        "city": "Edinburgh",
+        "iata": "EDI"
+      },
+      "destination": {
+        "city": "Menorca",
+        "country": "ES",
+        "type": "island",
+        "gateway_iata": "BCN",
+        "ferry": {
+          "from_port": "Barcelona",
+          "to_port": "Menorca"
+        },
+        "lat": 39.9496,
+        "lon": 4.1108
+      },
+      "depart_date": "2027-09-17",
+      "return_date": "2027-09-21",
+      "travelers": 4,
+      "budget": 3250,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1
+      },
+      "traveler": {
+        "name": "David Chen",
+        "email": "david.chen@example.com"
+      }
+    },
+    {
+      "id": "T065",
+      "intent": "trip",
+      "description": "7-night trip from Bristol to Madrid for two, hotel rated 4.0 or higher",
+      "origin": {
+        "city": "Bristol",
+        "iata": "BRS"
+      },
+      "destination": {
+        "city": "Madrid",
+        "country": "ES",
+        "type": "hub",
+        "gateway_iata": "MAD",
+        "ferry": null,
+        "lat": 40.4168,
+        "lon": -3.7038
+      },
+      "depart_date": "2027-08-14",
+      "return_date": "2027-08-21",
+      "travelers": 2,
+      "budget": 2930,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1,
+        "min_hotel_rating": 4.0
+      },
+      "traveler": {
+        "name": "Hannah Lindqvist",
+        "email": "hannah.lindqvist@example.com"
+      }
+    },
+    {
+      "id": "T066",
+      "intent": "trip",
+      "description": "5-night trip from Manchester to Naples for four",
+      "origin": {
+        "city": "Manchester",
+        "iata": "MAN"
+      },
+      "destination": {
+        "city": "Naples",
+        "country": "IT",
+        "type": "hub",
+        "gateway_iata": "NAP",
+        "ferry": null,
+        "lat": 40.8518,
+        "lon": 14.2681
+      },
+      "depart_date": "2027-09-01",
+      "return_date": "2027-09-06",
+      "travelers": 4,
+      "budget": 3010,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1
+      },
+      "traveler": {
+        "name": "Marcus Vance",
+        "email": "marcus.vance@example.com"
+      }
+    },
+    {
+      "id": "T067",
+      "intent": "trip",
+      "description": "4-night trip from Bristol to Split for two, hotel rated 3.5 or higher",
+      "origin": {
+        "city": "Bristol",
+        "iata": "BRS"
+      },
+      "destination": {
+        "city": "Split",
+        "country": "HR",
+        "type": "hub",
+        "gateway_iata": "SPU",
+        "ferry": null,
+        "lat": 43.5081,
+        "lon": 16.4402
+      },
+      "depart_date": "2027-05-17",
+      "return_date": "2027-05-21",
+      "travelers": 2,
+      "budget": 1520,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1,
+        "min_hotel_rating": 3.5
+      },
+      "traveler": {
+        "name": "Sofia Rossi",
+        "email": "sofia.rossi@example.com"
+      }
+    },
+    {
+      "id": "T068",
+      "intent": "trip",
+      "description": "5-night trip from Manchester to Paros for two, with ferry transfer from Piraeus",
+      "origin": {
+        "city": "Manchester",
+        "iata": "MAN"
+      },
+      "destination": {
+        "city": "Paros",
+        "country": "GR",
+        "type": "island",
+        "gateway_iata": "ATH",
+        "ferry": {
+          "from_port": "Piraeus",
+          "to_port": "Paros"
+        },
+        "lat": 37.0853,
+        "lon": 25.1522
+      },
+      "depart_date": "2027-06-08",
+      "return_date": "2027-06-13",
+      "travelers": 2,
+      "budget": 2270,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1
+      },
+      "traveler": {
+        "name": "Sofia Rossi",
+        "email": "sofia.rossi@example.com"
+      }
+    },
+    {
+      "id": "T069",
+      "intent": "trip",
+      "description": "4-night trip from Birmingham to Berlin for four, direct flights only",
+      "origin": {
+        "city": "Birmingham",
+        "iata": "BHX"
+      },
+      "destination": {
+        "city": "Berlin",
+        "country": "DE",
+        "type": "hub",
+        "gateway_iata": "BER",
+        "ferry": null,
+        "lat": 52.52,
+        "lon": 13.405
+      },
+      "depart_date": "2027-10-03",
+      "return_date": "2027-10-07",
+      "travelers": 4,
+      "budget": 1880,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 0
+      },
+      "traveler": {
+        "name": "Hannah Lindqvist",
+        "email": "hannah.lindqvist@example.com"
+      }
+    },
+    {
+      "id": "T070",
+      "intent": "trip",
+      "description": "4-night trip from London to Prague for two, direct flights only",
+      "origin": {
+        "city": "London",
+        "iata": "LHR"
+      },
+      "destination": {
+        "city": "Prague",
+        "country": "CZ",
+        "type": "hub",
+        "gateway_iata": "PRG",
+        "ferry": null,
+        "lat": 50.0755,
+        "lon": 14.4378
+      },
+      "depart_date": "2027-10-16",
+      "return_date": "2027-10-20",
+      "travelers": 2,
+      "budget": 1100,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 0
+      },
+      "traveler": {
+        "name": "Marcus Vance",
+        "email": "marcus.vance@example.com"
+      }
+    },
+    {
+      "id": "T071",
+      "intent": "trip",
+      "description": "7-night trip from Manchester to Vienna for four, direct flights only, hotel rated 4.0 or higher",
+      "origin": {
+        "city": "Manchester",
+        "iata": "MAN"
+      },
+      "destination": {
+        "city": "Vienna",
+        "country": "AT",
+        "type": "hub",
+        "gateway_iata": "VIE",
+        "ferry": null,
+        "lat": 48.2082,
+        "lon": 16.3738
+      },
+      "depart_date": "2027-10-07",
+      "return_date": "2027-10-14",
+      "travelers": 4,
+      "budget": 4070,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 0,
+        "min_hotel_rating": 4.0
+      },
+      "traveler": {
+        "name": "Liam O'Connor",
+        "email": "liam.oconnor@example.com"
+      }
+    },
+    {
+      "id": "T072",
+      "intent": "trip",
+      "description": "7-night trip from Birmingham to Naxos for four, with ferry transfer from Piraeus",
+      "origin": {
+        "city": "Birmingham",
+        "iata": "BHX"
+      },
+      "destination": {
+        "city": "Naxos",
+        "country": "GR",
+        "type": "island",
+        "gateway_iata": "ATH",
+        "ferry": {
+          "from_port": "Piraeus",
+          "to_port": "Naxos"
+        },
+        "lat": 37.1036,
+        "lon": 25.3766
+      },
+      "depart_date": "2027-09-22",
+      "return_date": "2027-09-29",
+      "travelers": 4,
+      "budget": 4980,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1
+      },
+      "traveler": {
+        "name": "David Chen",
+        "email": "david.chen@example.com"
+      }
+    },
+    {
+      "id": "T073",
+      "intent": "trip",
+      "description": "3-night trip from Bristol to Vienna for four, hotel rated 4.0 or higher",
+      "origin": {
+        "city": "Bristol",
+        "iata": "BRS"
+      },
+      "destination": {
+        "city": "Vienna",
+        "country": "AT",
+        "type": "hub",
+        "gateway_iata": "VIE",
+        "ferry": null,
+        "lat": 48.2082,
+        "lon": 16.3738
+      },
+      "depart_date": "2027-10-11",
+      "return_date": "2027-10-14",
+      "travelers": 4,
+      "budget": 2580,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1,
+        "min_hotel_rating": 4.0
+      },
+      "traveler": {
+        "name": "Priya Patel",
+        "email": "priya.patel@example.com"
+      }
+    },
+    {
+      "id": "T074",
+      "intent": "trip",
+      "description": "4-night trip from London to Madrid for three, direct flights only",
+      "origin": {
+        "city": "London",
+        "iata": "LHR"
+      },
+      "destination": {
+        "city": "Madrid",
+        "country": "ES",
+        "type": "hub",
+        "gateway_iata": "MAD",
+        "ferry": null,
+        "lat": 40.4168,
+        "lon": -3.7038
+      },
+      "depart_date": "2027-05-24",
+      "return_date": "2027-05-28",
+      "travelers": 3,
+      "budget": 2660,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 0
+      },
+      "traveler": {
+        "name": "Marcus Vance",
+        "email": "marcus.vance@example.com"
+      }
+    },
+    {
+      "id": "T075",
+      "intent": "trip",
+      "description": "5-night trip from Manchester to Amsterdam for two",
+      "origin": {
+        "city": "Manchester",
+        "iata": "MAN"
+      },
+      "destination": {
+        "city": "Amsterdam",
+        "country": "NL",
+        "type": "hub",
+        "gateway_iata": "AMS",
+        "ferry": null,
+        "lat": 52.3676,
+        "lon": 4.9041
+      },
+      "depart_date": "2027-05-05",
+      "return_date": "2027-05-10",
+      "travelers": 2,
+      "budget": 1010,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1
+      },
+      "traveler": {
+        "name": "Sofia Rossi",
+        "email": "sofia.rossi@example.com"
+      }
+    },
+    {
+      "id": "T076",
+      "intent": "trip",
+      "description": "4-night trip from London to Hvar for two, with ferry transfer from Split",
+      "origin": {
+        "city": "London",
+        "iata": "LHR"
+      },
+      "destination": {
+        "city": "Hvar",
+        "country": "HR",
+        "type": "island",
+        "gateway_iata": "SPU",
+        "ferry": {
+          "from_port": "Split",
+          "to_port": "Hvar"
+        },
+        "lat": 43.1729,
+        "lon": 16.4411
+      },
+      "depart_date": "2027-04-25",
+      "return_date": "2027-04-29",
+      "travelers": 2,
+      "budget": 1420,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1
+      },
+      "traveler": {
+        "name": "Eleanor Wright",
+        "email": "eleanor.wright@example.com"
+      }
+    },
+    {
+      "id": "T077",
+      "intent": "trip",
+      "description": "5-night trip from London to Naples for two",
+      "origin": {
+        "city": "London",
+        "iata": "LHR"
+      },
+      "destination": {
+        "city": "Naples",
+        "country": "IT",
+        "type": "hub",
+        "gateway_iata": "NAP",
+        "ferry": null,
+        "lat": 40.8518,
+        "lon": 14.2681
+      },
+      "depart_date": "2027-05-15",
+      "return_date": "2027-05-20",
+      "travelers": 2,
+      "budget": 1650,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1
+      },
+      "traveler": {
+        "name": "Hannah Lindqvist",
+        "email": "hannah.lindqvist@example.com"
+      }
+    },
+    {
+      "id": "T078",
+      "intent": "trip",
+      "description": "4-night trip from Birmingham to Split for two",
+      "origin": {
+        "city": "Birmingham",
+        "iata": "BHX"
+      },
+      "destination": {
+        "city": "Split",
+        "country": "HR",
+        "type": "hub",
+        "gateway_iata": "SPU",
+        "ferry": null,
+        "lat": 43.5081,
+        "lon": 16.4402
+      },
+      "depart_date": "2027-07-08",
+      "return_date": "2027-07-12",
+      "travelers": 2,
+      "budget": 1520,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1
+      },
+      "traveler": {
+        "name": "Alex Morgan",
+        "email": "alex.morgan@example.com"
+      }
+    },
+    {
+      "id": "T079",
+      "intent": "trip",
+      "description": "3-night trip from London to Split for two",
+      "origin": {
+        "city": "London",
+        "iata": "LHR"
+      },
+      "destination": {
+        "city": "Split",
+        "country": "HR",
+        "type": "hub",
+        "gateway_iata": "SPU",
+        "ferry": null,
+        "lat": 43.5081,
+        "lon": 16.4402
+      },
+      "depart_date": "2027-07-20",
+      "return_date": "2027-07-23",
+      "travelers": 2,
+      "budget": 1670,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1
+      },
+      "traveler": {
+        "name": "David Chen",
+        "email": "david.chen@example.com"
+      }
+    },
+    {
+      "id": "T080",
+      "intent": "trip",
+      "description": "4-night trip from Birmingham to Mykonos for two, with ferry transfer from Piraeus, hotel rated 4.0 or higher",
+      "origin": {
+        "city": "Birmingham",
+        "iata": "BHX"
+      },
+      "destination": {
+        "city": "Mykonos",
+        "country": "GR",
+        "type": "island",
+        "gateway_iata": "ATH",
+        "ferry": {
+          "from_port": "Piraeus",
+          "to_port": "Mykonos"
+        },
+        "lat": 37.4467,
+        "lon": 25.3289
+      },
+      "depart_date": "2027-10-16",
+      "return_date": "2027-10-20",
+      "travelers": 2,
+      "budget": 2470,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1,
+        "min_hotel_rating": 4.0
+      },
+      "traveler": {
+        "name": "David Chen",
+        "email": "david.chen@example.com"
+      }
+    },
+    {
+      "id": "T081",
+      "intent": "trip",
+      "description": "4-night trip from London to Lisbon for a solo traveller, direct flights only, hotel rated 3.5 or higher",
+      "origin": {
+        "city": "London",
+        "iata": "LHR"
+      },
+      "destination": {
+        "city": "Lisbon",
+        "country": "PT",
+        "type": "hub",
+        "gateway_iata": "LIS",
+        "ferry": null,
+        "lat": 38.7223,
+        "lon": -9.1393
+      },
+      "depart_date": "2027-08-12",
+      "return_date": "2027-08-16",
+      "travelers": 1,
+      "budget": 1300,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 0,
+        "min_hotel_rating": 3.5
+      },
+      "traveler": {
+        "name": "Sofia Rossi",
+        "email": "sofia.rossi@example.com"
+      }
+    },
+    {
+      "id": "T082",
+      "intent": "trip",
+      "description": "7-night trip from London to Athens for a solo traveller, hotel rated 3.5 or higher",
+      "origin": {
+        "city": "London",
+        "iata": "LHR"
+      },
+      "destination": {
+        "city": "Athens",
+        "country": "GR",
+        "type": "hub",
+        "gateway_iata": "ATH",
+        "ferry": null,
+        "lat": 37.9838,
+        "lon": 23.7275
+      },
+      "depart_date": "2027-10-08",
+      "return_date": "2027-10-15",
+      "travelers": 1,
+      "budget": 1500,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1,
+        "min_hotel_rating": 3.5
+      },
+      "traveler": {
+        "name": "Liam O'Connor",
+        "email": "liam.oconnor@example.com"
+      }
+    },
+    {
+      "id": "T083",
+      "intent": "trip",
+      "description": "3-night trip from Manchester to Berlin for two",
+      "origin": {
+        "city": "Manchester",
+        "iata": "MAN"
+      },
+      "destination": {
+        "city": "Berlin",
+        "country": "DE",
+        "type": "hub",
+        "gateway_iata": "BER",
+        "ferry": null,
+        "lat": 52.52,
+        "lon": 13.405
+      },
+      "depart_date": "2027-09-03",
+      "return_date": "2027-09-06",
+      "travelers": 2,
+      "budget": 910,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1
+      },
+      "traveler": {
+        "name": "David Chen",
+        "email": "david.chen@example.com"
+      }
+    },
+    {
+      "id": "T084",
+      "intent": "trip",
+      "description": "5-night trip from Manchester to Hvar for two, with ferry transfer from Split, hotel rated 3.5 or higher",
+      "origin": {
+        "city": "Manchester",
+        "iata": "MAN"
+      },
+      "destination": {
+        "city": "Hvar",
+        "country": "HR",
+        "type": "island",
+        "gateway_iata": "SPU",
+        "ferry": {
+          "from_port": "Split",
+          "to_port": "Hvar"
+        },
+        "lat": 43.1729,
+        "lon": 16.4411
+      },
+      "depart_date": "2027-05-02",
+      "return_date": "2027-05-07",
+      "travelers": 2,
+      "budget": 2430,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1,
+        "min_hotel_rating": 3.5
+      },
+      "traveler": {
+        "name": "Priya Patel",
+        "email": "priya.patel@example.com"
+      }
+    },
+    {
+      "id": "T085",
+      "intent": "trip",
+      "description": "4-night trip from Manchester to Athens for two, hotel rated 4.0 or higher",
+      "origin": {
+        "city": "Manchester",
+        "iata": "MAN"
+      },
+      "destination": {
+        "city": "Athens",
+        "country": "GR",
+        "type": "hub",
+        "gateway_iata": "ATH",
+        "ferry": null,
+        "lat": 37.9838,
+        "lon": 23.7275
+      },
+      "depart_date": "2027-08-13",
+      "return_date": "2027-08-17",
+      "travelers": 2,
+      "budget": 2910,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1,
+        "min_hotel_rating": 4.0
+      },
+      "traveler": {
+        "name": "David Chen",
+        "email": "david.chen@example.com"
+      }
+    },
+    {
+      "id": "T086",
+      "intent": "trip",
+      "description": "4-night trip from Birmingham to Amsterdam for two",
+      "origin": {
+        "city": "Birmingham",
+        "iata": "BHX"
+      },
+      "destination": {
+        "city": "Amsterdam",
+        "country": "NL",
+        "type": "hub",
+        "gateway_iata": "AMS",
+        "ferry": null,
+        "lat": 52.3676,
+        "lon": 4.9041
+      },
+      "depart_date": "2027-06-08",
+      "return_date": "2027-06-12",
+      "travelers": 2,
+      "budget": 1180,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1
+      },
+      "traveler": {
+        "name": "David Chen",
+        "email": "david.chen@example.com"
+      }
+    },
+    {
+      "id": "T087",
+      "intent": "trip",
+      "description": "3-night trip from Birmingham to Dublin for three, direct flights only, hotel rated 3.5 or higher",
+      "origin": {
+        "city": "Birmingham",
+        "iata": "BHX"
+      },
+      "destination": {
+        "city": "Dublin",
+        "country": "IE",
+        "type": "hub",
+        "gateway_iata": "DUB",
+        "ferry": null,
+        "lat": 53.3498,
+        "lon": -6.2603
+      },
+      "depart_date": "2027-08-21",
+      "return_date": "2027-08-24",
+      "travelers": 3,
+      "budget": 2300,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 0,
+        "min_hotel_rating": 3.5
+      },
+      "traveler": {
+        "name": "Tariq Al-Mansoor",
+        "email": "tariq.almansoor@example.com"
+      }
+    },
+    {
+      "id": "T088",
+      "intent": "trip",
+      "description": "5-night trip from Manchester to Naxos for three, with ferry transfer from Piraeus, hotel rated 3.5 or higher",
+      "origin": {
+        "city": "Manchester",
+        "iata": "MAN"
+      },
+      "destination": {
+        "city": "Naxos",
+        "country": "GR",
+        "type": "island",
+        "gateway_iata": "ATH",
+        "ferry": {
+          "from_port": "Piraeus",
+          "to_port": "Naxos"
+        },
+        "lat": 37.1036,
+        "lon": 25.3766
+      },
+      "depart_date": "2027-08-22",
+      "return_date": "2027-08-27",
+      "travelers": 3,
+      "budget": 5240,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1,
+        "min_hotel_rating": 3.5
+      },
+      "traveler": {
+        "name": "Eleanor Wright",
+        "email": "eleanor.wright@example.com"
+      }
+    },
+    {
+      "id": "T089",
+      "intent": "trip",
+      "description": "4-night trip from Edinburgh to Porto for four",
+      "origin": {
+        "city": "Edinburgh",
+        "iata": "EDI"
+      },
+      "destination": {
+        "city": "Porto",
+        "country": "PT",
+        "type": "hub",
+        "gateway_iata": "OPO",
+        "ferry": null,
+        "lat": 41.1579,
+        "lon": -8.6291
+      },
+      "depart_date": "2027-04-01",
+      "return_date": "2027-04-05",
+      "travelers": 4,
+      "budget": 2130,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1
+      },
+      "traveler": {
+        "name": "Tariq Al-Mansoor",
+        "email": "tariq.almansoor@example.com"
+      }
+    },
+    {
+      "id": "T090",
+      "intent": "trip",
+      "description": "7-night trip from Bristol to Dublin for three",
+      "origin": {
+        "city": "Bristol",
+        "iata": "BRS"
+      },
+      "destination": {
+        "city": "Dublin",
+        "country": "IE",
+        "type": "hub",
+        "gateway_iata": "DUB",
+        "ferry": null,
+        "lat": 53.3498,
+        "lon": -6.2603
+      },
+      "depart_date": "2027-04-03",
+      "return_date": "2027-04-10",
+      "travelers": 3,
+      "budget": 1660,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1
+      },
+      "traveler": {
+        "name": "Hannah Lindqvist",
+        "email": "hannah.lindqvist@example.com"
+      }
+    },
+    {
+      "id": "T091",
+      "intent": "trip",
+      "description": "7-night trip from Edinburgh to Prague for two, direct flights only",
+      "origin": {
+        "city": "Edinburgh",
+        "iata": "EDI"
+      },
+      "destination": {
+        "city": "Prague",
+        "country": "CZ",
+        "type": "hub",
+        "gateway_iata": "PRG",
+        "ferry": null,
+        "lat": 50.0755,
+        "lon": 14.4378
+      },
+      "depart_date": "2027-07-26",
+      "return_date": "2027-08-02",
+      "travelers": 2,
+      "budget": 1970,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 0
+      },
+      "traveler": {
+        "name": "Liam O'Connor",
+        "email": "liam.oconnor@example.com"
+      }
+    },
+    {
+      "id": "T092",
+      "intent": "trip",
+      "description": "3-night trip from Manchester to Capri for four, with ferry transfer from Naples",
+      "origin": {
+        "city": "Manchester",
+        "iata": "MAN"
+      },
+      "destination": {
+        "city": "Capri",
+        "country": "IT",
+        "type": "island",
+        "gateway_iata": "NAP",
+        "ferry": {
+          "from_port": "Naples",
+          "to_port": "Capri"
+        },
+        "lat": 40.5532,
+        "lon": 14.2222
+      },
+      "depart_date": "2027-04-04",
+      "return_date": "2027-04-07",
+      "travelers": 4,
+      "budget": 2890,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1
+      },
+      "traveler": {
+        "name": "Hannah Lindqvist",
+        "email": "hannah.lindqvist@example.com"
+      }
+    },
+    {
+      "id": "T093",
+      "intent": "trip",
+      "description": "7-night trip from London to Vienna for four, direct flights only, hotel rated 4.0 or higher",
+      "origin": {
+        "city": "London",
+        "iata": "LHR"
+      },
+      "destination": {
+        "city": "Vienna",
+        "country": "AT",
+        "type": "hub",
+        "gateway_iata": "VIE",
+        "ferry": null,
+        "lat": 48.2082,
+        "lon": 16.3738
+      },
+      "depart_date": "2027-09-06",
+      "return_date": "2027-09-13",
+      "travelers": 4,
+      "budget": 4240,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 0,
+        "min_hotel_rating": 4.0
+      },
+      "traveler": {
+        "name": "Tariq Al-Mansoor",
+        "email": "tariq.almansoor@example.com"
+      }
+    },
+    {
+      "id": "T094",
+      "intent": "trip",
+      "description": "4-night trip from Birmingham to Lisbon for a solo traveller, hotel rated 3.5 or higher",
+      "origin": {
+        "city": "Birmingham",
+        "iata": "BHX"
+      },
+      "destination": {
+        "city": "Lisbon",
+        "country": "PT",
+        "type": "hub",
+        "gateway_iata": "LIS",
+        "ferry": null,
+        "lat": 38.7223,
+        "lon": -9.1393
+      },
+      "depart_date": "2027-06-17",
+      "return_date": "2027-06-21",
+      "travelers": 1,
+      "budget": 1330,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1,
+        "min_hotel_rating": 3.5
+      },
+      "traveler": {
+        "name": "Hannah Lindqvist",
+        "email": "hannah.lindqvist@example.com"
+      }
+    },
+    {
+      "id": "T095",
+      "intent": "trip",
+      "description": "4-night trip from Bristol to Lisbon for three, hotel rated 4.0 or higher",
+      "origin": {
+        "city": "Bristol",
+        "iata": "BRS"
+      },
+      "destination": {
+        "city": "Lisbon",
+        "country": "PT",
+        "type": "hub",
+        "gateway_iata": "LIS",
+        "ferry": null,
+        "lat": 38.7223,
+        "lon": -9.1393
+      },
+      "depart_date": "2027-04-21",
+      "return_date": "2027-04-25",
+      "travelers": 3,
+      "budget": 2100,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1,
+        "min_hotel_rating": 4.0
+      },
+      "traveler": {
+        "name": "Hannah Lindqvist",
+        "email": "hannah.lindqvist@example.com"
+      }
+    },
+    {
+      "id": "T096",
+      "intent": "trip",
+      "description": "7-night trip from Birmingham to Paros for two, with ferry transfer from Piraeus",
+      "origin": {
+        "city": "Birmingham",
+        "iata": "BHX"
+      },
+      "destination": {
+        "city": "Paros",
+        "country": "GR",
+        "type": "island",
+        "gateway_iata": "ATH",
+        "ferry": {
+          "from_port": "Piraeus",
+          "to_port": "Paros"
+        },
+        "lat": 37.0853,
+        "lon": 25.1522
+      },
+      "depart_date": "2027-08-15",
+      "return_date": "2027-08-22",
+      "travelers": 2,
+      "budget": 2760,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1
+      },
+      "traveler": {
+        "name": "Liam O'Connor",
+        "email": "liam.oconnor@example.com"
+      }
+    },
+    {
+      "id": "T097",
+      "intent": "trip",
+      "description": "3-night trip from London to Porto for two, hotel rated 4.0 or higher",
+      "origin": {
+        "city": "London",
+        "iata": "LHR"
+      },
+      "destination": {
+        "city": "Porto",
+        "country": "PT",
+        "type": "hub",
+        "gateway_iata": "OPO",
+        "ferry": null,
+        "lat": 41.1579,
+        "lon": -8.6291
+      },
+      "depart_date": "2027-07-30",
+      "return_date": "2027-08-02",
+      "travelers": 2,
+      "budget": 1620,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1,
+        "min_hotel_rating": 4.0
+      },
+      "traveler": {
+        "name": "Hannah Lindqvist",
+        "email": "hannah.lindqvist@example.com"
+      }
+    },
+    {
+      "id": "T098",
+      "intent": "trip",
+      "description": "3-night trip from Bristol to Rome for two",
+      "origin": {
+        "city": "Bristol",
+        "iata": "BRS"
+      },
+      "destination": {
+        "city": "Rome",
+        "country": "IT",
+        "type": "hub",
+        "gateway_iata": "FCO",
+        "ferry": null,
+        "lat": 41.9028,
+        "lon": 12.4964
+      },
+      "depart_date": "2027-04-09",
+      "return_date": "2027-04-12",
+      "travelers": 2,
+      "budget": 1240,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1
+      },
+      "traveler": {
+        "name": "David Chen",
+        "email": "david.chen@example.com"
+      }
+    },
+    {
+      "id": "T099",
+      "intent": "trip",
+      "description": "5-night trip from Edinburgh to Amsterdam for two",
+      "origin": {
+        "city": "Edinburgh",
+        "iata": "EDI"
+      },
+      "destination": {
+        "city": "Amsterdam",
+        "country": "NL",
+        "type": "hub",
+        "gateway_iata": "AMS",
+        "ferry": null,
+        "lat": 52.3676,
+        "lon": 4.9041
+      },
+      "depart_date": "2027-06-22",
+      "return_date": "2027-06-27",
+      "travelers": 2,
+      "budget": 1790,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1
+      },
+      "traveler": {
+        "name": "Liam O'Connor",
+        "email": "liam.oconnor@example.com"
+      }
+    },
+    {
+      "id": "T100",
+      "intent": "trip",
+      "description": "3-night trip from Bristol to Hvar for two, with ferry transfer from Split",
+      "origin": {
+        "city": "Bristol",
+        "iata": "BRS"
+      },
+      "destination": {
+        "city": "Hvar",
+        "country": "HR",
+        "type": "island",
+        "gateway_iata": "SPU",
+        "ferry": {
+          "from_port": "Split",
+          "to_port": "Hvar"
+        },
+        "lat": 43.1729,
+        "lon": 16.4411
+      },
+      "depart_date": "2027-07-24",
+      "return_date": "2027-07-27",
+      "travelers": 2,
+      "budget": 1470,
+      "currency": "GBP",
+      "constraints": {
+        "max_stops": 1
+      },
+      "traveler": {
+        "name": "Sofia Rossi",
+        "email": "sofia.rossi@example.com"
+      }
+    }
+  ]
+}
