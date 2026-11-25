@@ -12,6 +12,7 @@ from dataclasses import asdict, dataclass
 
 import httpx
 
+from engine.prices import price
 from engine.settings import DEFAULTS, redact
 from engine.planner import (SYSTEM_PROMPT, PlanParseError, build_user_prompt, extract_task_from_prompt,
                             heuristic_plan, parse_plan)
@@ -25,26 +26,6 @@ def default_model(provider: str) -> str:
     return os.environ.get(key) or DEFAULTS[key]
 
 
-# USD per 1M tokens (input, output). ESTIMATES - verify against provider pricing before reporting.
-# The mock planner is priced at a reference API rate so token savings translate into a cost axis.
-PRICING_PER_MTOK: dict[str, tuple[float, float]] = {
-    "mock": (3.0, 15.0),
-    "ollama": (0.0, 0.0),
-    "openai:gpt-4o-mini": (0.15, 0.60),
-    "openai": (2.5, 10.0),
-    "anthropic:claude-haiku-5-5": (1.0, 5.0),
-    "anthropic": (3.0, 15.0),
-    # DeepSeek peak, cache-miss prices (off-peak is half), read 2026-11-25.
-    "deepseek:deepseek-v4-pro": (1.32, 3.96),
-    "deepseek": (0.30, 1.20),
-}
-
-
-def price(provider: str, model: str, prompt_tokens: int, completion_tokens: int) -> float:
-    pin, pout = PRICING_PER_MTOK.get(f"{provider}:{model}", PRICING_PER_MTOK.get(provider, (0.0, 0.0)))
-    return round((prompt_tokens * pin + completion_tokens * pout) / 1e6, 6)
-
-
 @dataclass
 class LLMResponse:
     text: str
@@ -53,11 +34,14 @@ class LLMResponse:
     prompt_tokens: int
     completion_tokens: int
     latency_ms: float
-    cost_usd: float
+    cost_usd: float | None  # None: the model has no listed price
     error: str | None = None  # set when the call itself failed; its tokens are then unknown (0)
     error_kind: str | None = None  # fatal | transient (provider faults), or None (e.g. a local model was too slow)
     retries: int = 0
     retry_ms: float = 0.0  # failed tries and back-off before the final try; not part of latency_ms
+    cached_tokens: int = 0  # part of prompt_tokens, served from the provider's prompt cache
+    cache_write_tokens: int = 0  # part of prompt_tokens, written to it
+    cost_uncached_usd: float | None = 0.0  # the same call without any prompt caching
 
     @property
     def total_tokens(self) -> int:
@@ -111,7 +95,8 @@ class LLMClient:
         self.model = model or default_model(self.provider)
         self.timeout = timeout
 
-    async def _raw(self, system: str, user: str) -> tuple[str, int, int]:
+    async def _raw(self, system: str, user: str) -> tuple:
+        """(text, prompt tokens, completion tokens[, cached prompt tokens, cache-write prompt tokens])"""
         raise NotImplementedError
 
     async def warm_up(self) -> None:
@@ -122,7 +107,7 @@ class LLMClient:
         while True:
             t0 = time.perf_counter()
             try:
-                text, pt, ct = await self._raw(system, user)
+                text, pt, ct, *cache = await self._raw(system, user)
             except Exception as e:  # noqa: BLE001 - reported to the caller with its kind and duration
                 kind = classify_error(e, self.provider)
                 if kind == "transient" and n < len(self.retry_delays):
@@ -133,8 +118,10 @@ class LLMClient:
                                    0.0, error=redact(f"llm_error: {type(e).__name__}: {e}"), error_kind=kind,
                                    retries=n, retry_ms=round((t0 - start) * 1000, 3))
             return LLMResponse(text, self.provider, self.model, pt, ct, round((time.perf_counter() - t0) * 1000, 3),
-                               price(self.provider, self.model, pt, ct), retries=n,
-                               retry_ms=round((t0 - start) * 1000, 3))
+                               price(self.provider, self.model, pt, ct, *cache), retries=n,
+                               retry_ms=round((t0 - start) * 1000, 3), cached_tokens=cache[0] if cache else 0,
+                               cache_write_tokens=cache[1] if cache else 0,
+                               cost_uncached_usd=price(self.provider, self.model, pt, ct))
 
 
 class MockClient(LLMClient):
@@ -174,17 +161,27 @@ class OllamaClient(LLMClient):
             data.get("eval_count") or _est_tokens(text))
 
 
+def _openai_usage(u) -> tuple[int, int, int, int]:
+    """Prompt, completion, cached and cache-write tokens (DeepSeek names its cache hits differently)."""
+    if not u:
+        return 0, 0, 0, 0
+    d = getattr(u, "prompt_tokens_details", None)
+    cached = getattr(u, "prompt_cache_hit_tokens", None) or getattr(d, "cached_tokens", None) or 0
+    return u.prompt_tokens, u.completion_tokens, cached, getattr(d, "cache_write_tokens", None) or 0
+
+
 class OpenAIClient(LLMClient):
     provider = "openai"
 
-    async def _raw(self, system: str, user: str) -> tuple[str, int, int]:
+    async def _raw(self, system: str, user: str) -> tuple:
+        # Reasoning models do not take a temperature; the others are kept deterministic.
+        sampling = {"temperature": 0} if self.model.startswith("gpt-4") else {}
         from openai import AsyncOpenAI
         client = AsyncOpenAI(timeout=self.timeout, max_retries=0)
         r = await client.chat.completions.create(
-            model=self.model, temperature=0, response_format={"type": "json_object"},
+            model=self.model, response_format={"type": "json_object"}, **sampling,
             messages=[{"role": "system", "content": system}, {"role": "user", "content": user}])
-        u = r.usage
-        return r.choices[0].message.content or "", u.prompt_tokens if u else 0, u.completion_tokens if u else 0
+        return r.choices[0].message.content or "", *_openai_usage(r.usage)
 
 
 class DeepSeekClient(LLMClient):
@@ -199,8 +196,7 @@ class DeepSeekClient(LLMClient):
             model=self.model, temperature=0, max_tokens=8192, response_format={"type": "json_object"},
             extra_body={"thinking": {"type": "disabled"}},
             messages=[{"role": "system", "content": system}, {"role": "user", "content": user}])
-        u = r.usage
-        return r.choices[0].message.content or "", u.prompt_tokens if u else 0, u.completion_tokens if u else 0
+        return r.choices[0].message.content or "", *_openai_usage(r.usage)
 
 
 class AnthropicClient(LLMClient):
@@ -212,7 +208,9 @@ class AnthropicClient(LLMClient):
         r = await client.messages.create(model=self.model, max_tokens=8192, system=system,
                                          messages=[{"role": "user", "content": user}])
         text = "".join(getattr(b, "text", "") for b in r.content if getattr(b, "type", "") == "text")
-        return text, r.usage.input_tokens, r.usage.output_tokens
+        u = r.usage  # input_tokens leaves out cached and written tokens; output_tokens includes thinking
+        cached, written = u.cache_read_input_tokens or 0, u.cache_creation_input_tokens or 0
+        return text, u.input_tokens + cached + written, u.output_tokens, cached, written
 
 
 CLIENTS = {c.provider: c for c in (MockClient, OllamaClient, OpenAIClient, AnthropicClient,

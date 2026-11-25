@@ -1,0 +1,50 @@
+provider,model,input,cached_input,cache_write,output,max_prompt_tokens,conditions,source_url,checked_on
+mock,*,3,,,15,,"Reference price, not billed; kept so token savings have a cost axis",,
+ollama,*,0,,,0,,Local model; electricity and hardware not included,,
+anthropic,claude-fable-5-2,8,0.2,10,40,,cache write: 5-minute,https://platform.claude.com/docs/en/about-claude/pricing,2026-11-25
+anthropic,claude-fable-5-1,10,0.25,12.5,50,,cache write: 5-minute,https://platform.claude.com/docs/en/about-claude/pricing,2026-11-25
+anthropic,claude-fable-5,10,1,12.5,50,,cache write: 5-minute,https://platform.claude.com/docs/en/about-claude/pricing,2026-11-25
+anthropic,claude-opus-5-5,4,0.2,5,20,,cache write: 5-minute,https://platform.claude.com/docs/en/about-claude/pricing,2026-11-25
+anthropic,claude-opus-5,5,0.5,6.25,25,,cache write: 5-minute,https://platform.claude.com/docs/en/about-claude/pricing,2026-11-25
+anthropic,claude-opus-4-8,5,0.5,6.25,25,,cache write: 5-minute,https://platform.claude.com/docs/en/about-claude/pricing,2026-11-25
+anthropic,claude-opus-4-7,5,0.5,6.25,25,,cache write: 5-minute,https://platform.claude.com/docs/en/about-claude/pricing,2026-11-25
+anthropic,claude-opus-4-6,5,0.5,6.25,25,,cache write: 5-minute,https://platform.claude.com/docs/en/about-claude/pricing,2026-11-25
+anthropic,claude-sonnet-5-5,2,0.1,2.5,10,,cache write: 5-minute,https://platform.claude.com/docs/en/about-claude/pricing,2026-11-25
+anthropic,claude-sonnet-5,2,0.2,2.5,10,,cache write: 5-minute,https://platform.claude.com/docs/en/about-claude/pricing,2026-11-25
+anthropic,claude-sonnet-4-6,3,0.3,3.75,15,,cache write: 5-minute,https://platform.claude.com/docs/en/about-claude/pricing,2026-11-25
+anthropic,claude-haiku-5-5,0.1,0.01,0.125,0.5,100000,Prompts up to 100K tokens; cache write: 5-minute,https://platform.claude.com/docs/en/about-claude/pricing,2026-11-25
+anthropic,claude-haiku-4-5,1,0.1,1.25,5,,cache write: 5-minute,https://platform.claude.com/docs/en/about-claude/pricing,2026-11-25
+anthropic,claude-haiku-4-5-20251001,1,0.1,1.25,5,,cache write: 5-minute,https://platform.claude.com/docs/en/about-claude/pricing,2026-11-25
+openai,gpt-6.2-astra,8,0.4,10,40,272000,Standard tier; prompts up to 272K tokens; cache write: 30-minute,https://developers.openai.com/api/docs/pricing,2026-11-25
+openai,gpt-6.2-sol,2,0.1,2.5,10,272000,Standard tier; prompts up to 272K tokens; cache write: 30-minute,https://developers.openai.com/api/docs/pricing,2026-11-25
+openai,gpt-6-astra,10,1,12.5,50,272000,Standard tier; prompts up to 272K tokens; cache write: 30-minute,https://developers.openai.com/api/docs/pricing,2026-11-25
+openai,gpt-6.1-sol,2,0.1,2.5,10,272000,Standard tier; prompts up to 272K tokens; cache write: 30-minute,https://developers.openai.com/api/docs/pricing,2026-11-25
+openai,gpt-6.1-terra,1,0.05,1.25,5,272000,Standard tier; prompts up to 272K tokens; cache write: 30-minute,https://developers.openai.com/api/docs/pricing,2026-11-25
+openai,gpt-6-luna,0.1,0.01,0.125,0.5,272000,Standard tier; prompts up to 272K tokens; cache write: 30-minute,https://developers.openai.com/api/docs/pricing,2026-11-25
+openai,gpt-6-sol,2,0.2,2.5,10,272000,Standard tier; prompts up to 272K tokens; cache write: 30-minute,https://developers.openai.com/api/docs/pricing,2026-11-25
+openai,gpt-5.6-sol,4,0.4,5,20,272000,Standard tier; prompts up to 272K tokens; cache write: 30-minute,https://developers.openai.com/api/docs/pricing,2026-11-25
+openai,gpt-5.6-terra,2,0.2,2.5,12,272000,Standard tier; prompts up to 272K tokens; cache write: 30-minute,https://developers.openai.com/api/docs/pricing,2026-11-25
+openai,gpt-5.6-luna,0.2,0.02,0.25,1.2,272000,Standard tier; prompts up to 272K tokens; cache write: 30-minute,https://developers.openai.com/api/docs/pricing,2026-11-25
+openai,gpt-5.5,5,0.5,,30,272000,Standard tier; prompts up to 272K tokens,https://developers.openai.com/api/docs/pricing,2026-11-25
+openai,gpt-5.5-pro,30,,,180,272000,Standard tier; prompts up to 272K tokens,https://developers.openai.com/api/docs/pricing,2026-11-25
+openai,gpt-5.4,2.5,0.25,,15,272000,Standard tier; prompts up to 272K tokens,https://developers.openai.com/api/docs/pricing,2026-11-25
+openai,gpt-5.4-pro,30,,,180,272000,Standard tier; prompts up to 272K tokens,https://developers.openai.com/api/docs/pricing,2026-11-25
+openai,gpt-5.4-mini,0.75,0.075,,4.5,,Standard tier,https://developers.openai.com/api/docs/pricing,2026-11-25
+openai,gpt-5.4-nano,0.2,0.02,,1.25,,Standard tier,https://developers.openai.com/api/docs/pricing,2026-11-25
+openai,gpt-5.2,1.75,0.175,,14,,Standard tier,https://developers.openai.com/api/docs/pricing,2026-11-25
+openai,gpt-5.2-pro,21,,,168,,Standard tier,https://developers.openai.com/api/docs/pricing,2026-11-25
+openai,gpt-5.1,1.25,0.125,,10,,Standard tier,https://developers.openai.com/api/docs/pricing,2026-11-25
+openai,gpt-5,1.25,0.125,,10,,Standard tier,https://developers.openai.com/api/docs/pricing,2026-11-25
+openai,gpt-5-mini,0.25,0.025,,2,,Standard tier,https://developers.openai.com/api/docs/pricing,2026-11-25
+openai,gpt-5-nano,0.05,0.005,,0.4,,Standard tier,https://developers.openai.com/api/docs/pricing,2026-11-25
+openai,gpt-5-pro,15,,,120,,Standard tier,https://developers.openai.com/api/docs/pricing,2026-11-25
+openai,gpt-4.1,2,0.5,,8,,Standard tier,https://developers.openai.com/api/docs/pricing,2026-11-25
+openai,gpt-4.1-mini,0.4,0.1,,1.6,,Standard tier,https://developers.openai.com/api/docs/pricing,2026-11-25
+openai,gpt-4o,2.5,1.25,,10,,Standard tier,https://developers.openai.com/api/docs/pricing,2026-11-25
+openai,gpt-4o-mini,0.15,0.075,,0.6,,Standard tier,https://developers.openai.com/api/docs/pricing,2026-11-25
+openai,o3-pro,20,,,80,,Standard tier,https://developers.openai.com/api/docs/pricing,2026-11-25
+openai,o3,2,0.5,,8,,Standard tier,https://developers.openai.com/api/docs/pricing,2026-11-25
+openai,chat-latest,5,0.5,,30,,Standard tier,https://developers.openai.com/api/docs/pricing,2026-11-25
+deepseek,deepseek-flash,0.3,0.006,,1.2,,Peak price (off-peak is half),https://api-docs.deepseek.com/quick_start/pricing,2026-11-25
+deepseek,deepseek-v4-pro,1.32,0.044,,3.96,,Peak price (off-peak is half),https://api-docs.deepseek.com/quick_start/pricing,2026-11-25
+deepseek,deepseek-v4-flash,0.3,0.006,,1.2,,Peak price (off-peak is half); legacy name billed as deepseek-flash,https://api-docs.deepseek.com/quick_start/pricing,2026-11-25

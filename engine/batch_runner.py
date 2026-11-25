@@ -27,6 +27,7 @@ from engine.mcp_proxy import MCPProxy, catalog_fingerprint, live_is_configured
 from engine.perturbations import KINDS, load_dataset, perturb
 from engine.plan_cache import PlanCache
 from engine.plan_executor import ExecutionResult, Plan, commit_actions, execute_plan, validate_itinerary
+from engine import prices
 from engine.runctl import STOP_FILE, active_run, clear_pid_file, write_pid_file
 from engine.settings import load_dotenv, redact
 
@@ -154,7 +155,8 @@ class PolicyRunner:
         base = {"run_id": self.cfg.run_id, "episode_id": episode_id, "task_id": task["id"],
                 "base_id": task.get("base_id", task["id"]), "policy": self.policy, "perturbation": pert}
         trace: list[dict] = []
-        tokens = {"prompt": 0, "completion": 0, "calls": 0, "cost": 0.0, "plan_ms": 0.0, "retries": 0, "retry_ms": 0.0}
+        tokens = {"prompt": 0, "completion": 0, "calls": 0, "cost": 0.0, "plan_ms": 0.0, "retries": 0, "retry_ms": 0.0,
+                  "uncached": 0.0, "cached": 0, "unpriced": 0}
         provider_error: dict | None = None
         attempts: list[Attempt] = []
         decisions: list[str] = []
@@ -194,7 +196,12 @@ class PolicyRunner:
                 tokens["prompt"] += r.prompt_tokens
                 tokens["completion"] += r.completion_tokens
                 tokens["calls"] += 1
-                tokens["cost"] += r.cost_usd
+                if r.cost_usd is None or r.cost_uncached_usd is None:
+                    tokens["unpriced"] += 1
+                else:
+                    tokens["cost"] += r.cost_usd
+                    tokens["uncached"] += r.cost_uncached_usd
+                tokens["cached"] += r.cached_tokens
                 tokens["plan_ms"] += r.latency_ms
                 tokens["retries"] += r.retries
                 tokens["retry_ms"] += r.retry_ms
@@ -317,7 +324,10 @@ class PolicyRunner:
             "replanned": any(a.mode == "replan" for a in attempts) or (final is not None and final.mode == "replan"),
             "decision_path": " > ".join(decisions) or "none",
             "llm_calls": tokens["calls"], "prompt_tokens": tokens["prompt"], "completion_tokens": tokens["completion"],
-            "total_tokens": ep_tokens(), "cost_usd": round(tokens["cost"], 6),
+            "total_tokens": ep_tokens(), "cached_tokens": tokens["cached"],
+            # None: the model has no listed price. cost_uncached_usd leaves out provider prompt-cache discounts.
+            "cost_usd": None if tokens["unpriced"] else round(tokens["cost"], 6),
+            "cost_uncached_usd": None if tokens["unpriced"] else round(tokens["uncached"], 6),
             "plan_latency_ms": round(tokens["plan_ms"], 3), "exec_latency_ms": round(exec_ms, 3),
             "latency_ms": round((time.perf_counter() - t_start) * 1000 - paced_ms - tokens["retry_ms"], 3),  # no simulated or retry waits
             "paced": self.cfg.pace, "paced_wait_ms": round(paced_ms, 3) if self.cfg.pace else None,
@@ -371,7 +381,8 @@ async def run_benchmark(cfg: RunConfig, client: LLMClient | None = None, progres
     records: list[dict] = []
     events.append({"ts": time.time(), "run_id": cfg.run_id, "type": "run_start",
                    "config": {k: v for k, v in cfg.__dict__.items()}, "n_tasks": len(tasks),
-                   "dataset": dataset, "model": client.model, "latency_profile_id": latency.id if latency else None})
+                   "dataset": dataset, "model": client.model, "latency_profile_id": latency.id if latency else None,
+                   "price": prices.find(client.provider, client.model), "prices_hash": prices.file_hash()})
     async with MCPProxy(cfg.config_path, source=cfg.source,
                         replay_dir=cfg.replay_dir or Path(cfg.cache_dir) / "replay",
                         actions_log=logs / "simulated_actions.jsonl") as proxy:
@@ -420,6 +431,7 @@ def summarize(records: list[dict]) -> str:
     if not records:
         return "no records"
     df = pd.DataFrame(records)
+    df["cost_usd"] = pd.to_numeric(df["cost_usd"])
     lost = df["provider_error"].notna()
     note = f"{int(lost.sum())} episode(s) excluded: provider errors\n" if lost.any() else ""
     df = df[~lost]
@@ -427,7 +439,7 @@ def summarize(records: list[dict]) -> str:
         return note + "no valid episodes"
     g = df.groupby("policy").agg(episodes=("success", "size"), success_rate=("success", "mean"),
                                  mean_tokens=("total_tokens", "mean"), llm_calls=("llm_calls", "sum"),
-                                 cost_usd=("cost_usd", "sum"), mean_latency_ms=("latency_ms", "mean"))
+                                 cost_usd=("cost_usd", lambda s: s.sum(skipna=False)), mean_latency_ms=("latency_ms", "mean"))
     p = df.pivot_table(index="policy", columns="perturbation", values="success", aggfunc="mean")
     return note + g.round(3).to_string() + "\n\nSuccess rate by perturbation:\n" + p.round(2).to_string()
 

@@ -43,7 +43,7 @@ by a model-free CPU executor. A deterministic validator decides whether reuse su
 8. **Replay-cache key** = sha256 of canonical JSON `{server, tool, args}` (sorted keys). Changing the key
    format invalidates `cache/replay/`; bump `REPLAY_KEY_VERSION` if you must.
 9. **UI is decoupled.** `app.py` never imports the engine for execution; it reads `logs/*.jsonl`
-   and may spawn `batch_runner` as a subprocess. It may import only `runctl`, `datasets` and `settings`
+   and may spawn `batch_runner` as a subprocess. It may import only `runctl`, `datasets`, `settings` and `prices`
    (stdlib only), and writes only new files in `data/custom/` and, on request from a local browser, `.env`.
    Built-in datasets and existing copies are never overwritten. Logs are append-only JSONL, one object per line;
    the sole exception is user-confirmed `runctl.delete_run`, refused while any run is active.
@@ -95,4 +95,5 @@ exist in `MCPProxy` but the CLI refuses them while nothing is mapped (invariant 
 - Endpoint URLs in `config/servers.json` were checked on 2026-11-25 and serve only the calibration.
 - Calibration is manual and slow: never call live servers from tests, the app or a benchmark run, and never
   store or log their responses (untrusted text, unclear storage rights).
-- Pricing in `engine/llm_clients.py::PRICING_PER_MTOK` is a configurable estimate; update before reporting cost.
+- Prices live in `config/llm_prices.csv` (loader `engine/prices.py`), read by hand from provider pages with `source_url` and
+  `checked_on`. Exact model match; an unlisted model costs `None`, never a guess. Recheck before reporting cost.

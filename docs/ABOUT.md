@@ -127,7 +127,8 @@ model names and API keys.
   and weather.
 - **The `mock` planner is a heuristic, not an LLM.** Its token counts are estimates (characters ÷ 4)
   and its latency is near zero. Use a real provider for claims about cost or latency.
-- **Prices are estimates** (`engine/llm_clients.py`); check them before reporting cost.
+- **Costs are estimates:** reported tokens times the prices in `config/llm_prices.csv`. DeepSeek uses the peak price, and
+  failed calls count as \$0. A model without a listed price shows a dash.
 - **Small sample.** 10 tasks by default and one seed per run, so no confidence intervals. Repeat with several
   seeds before drawing strong conclusions.
 - **Some failures are genuinely infeasible** (no direct flight exists, or the budget is too low even

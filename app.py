@@ -24,13 +24,12 @@ import pandas as pd  # noqa: E402
 import streamlit as st  # noqa: E402
 
 import dag_view  # noqa: E402  (pure drawing code)
-from engine import datasets as dsets, settings  # noqa: E402  (stdlib only, no execution)
+from engine import datasets as dsets, prices, settings  # noqa: E402  (stdlib only, no execution)
 from engine.runctl import (STOP_FILE, RunActiveError, active_run, delete_run,  # noqa: E402
                            force_stop, request_stop)  # process control only, never execution
 
 ROOT = Path(__file__).resolve().parent
 POLICIES = ["replan", "cache", "budget_aware"]
-UNBILLED = ("mock", "ollama")  # no API charge
 PERTS = ["P0", "P1", "P2", "P3", "P4", "P5"]
 # Reference categorical palette, slots 1-4 (slots 1-3 validated all-pairs; 1-4 adjacent for stacks).
 POLICY_COLOR = {"replan": "#2a78d6", "cache": "#eb6834", "budget_aware": "#1baf7a"}
@@ -68,7 +67,19 @@ def read_jsonl(path: Path, offset: int = 0, run_id: str | None = None) -> tuple[
 @st.cache_data(ttl=2, show_spinner=False)
 def load_runs(path: str, mtime: float) -> pd.DataFrame:
     rows, _ = read_jsonl(Path(path))
-    return pd.DataFrame(rows)
+    frame = pd.DataFrame(rows)
+    for c in {"cost_usd", "cost_uncached_usd"} & set(frame.columns):
+        frame[c] = pd.to_numeric(frame[c])  # an unknown price is NaN
+    return frame
+
+
+def total_cost(s: pd.Series) -> float:
+    """Sum, or NaN if any price is unknown (a partial total would look complete)."""
+    return s.sum(skipna=False)
+
+
+def money(x, digits: int = 3) -> str:
+    return "–" if x is None or pd.isna(x) else f"${x:.{digits}f}"
 
 
 @st.cache_data(ttl=2, show_spinner=False)
@@ -167,7 +178,7 @@ def lost_note() -> None:
 
 
 @st.cache_data(ttl=5, show_spinner=False)
-def _run_start_config(events_path: str, mtime_: float, run_id: str) -> dict:
+def _run_start_event(events_path: str, mtime_: float, run_id: str) -> dict:
     p = Path(events_path)
     if p.exists():
         with p.open("rb") as f:
@@ -178,13 +189,17 @@ def _run_start_config(events_path: str, mtime_: float, run_id: str) -> dict:
                     except json.JSONDecodeError:
                         continue
                     if ev.get("run_id") == run_id:
-                        return ev.get("config") or {}
+                        return ev
     return {}
+
+
+def run_start_event(run_id: str) -> dict:
+    return _run_start_event(str(EVENTS), mtime(EVENTS), run_id)
 
 
 def run_start_config(run_id: str) -> dict:
     """The run's full RunConfig as logged in its run_start event ({} if unavailable)."""
-    return _run_start_config(str(EVENTS), mtime(EVENTS), run_id)
+    return run_start_event(run_id).get("config") or {}
 
 
 def run_cache_dir(run_id: str) -> Path:
@@ -315,6 +330,11 @@ with st.sidebar.expander("Launch benchmark run", expanded=not run_ids):
             missing = key_name in conf and not conf[key_name][0]
             st.caption(f"Model: `{conf[f'{provider.upper()}_MODEL'][0]}`"
                        + (f". `{key_name}` is not set (Settings tab)." if missing else ""))
+            if provider not in prices.UNBILLED:
+                row = prices.find(provider, conf[f"{provider.upper()}_MODEL"][0])
+                st.caption(f"Price: \\${row['input']:g} in, \\${row['output']:g} out per million tokens "
+                           f"(checked {row['checked_on']})" if row else
+                           "No price listed for this model, so its cost will show as a dash.")
         st.caption("Tools: FastMCP simulators, calibrated latency", help=(
             "Synthetic data served by FastMCP. Delays come from a one-time calibration of real MCP servers "
             "(assumed for experiences and weather) and are added after each episode."))
@@ -574,11 +594,11 @@ with tab_res:
         summary = df.groupby("policy").agg(
             episodes=("success", "size"), success_rate=("success", "mean"),
             mean_tokens=("total_tokens", "mean"), llm_calls=("llm_calls", "sum"),
-            cost_usd=("cost_usd", "sum"), mean_latency_ms=("latency_ms", "mean"),
+            cost_usd=("cost_usd", total_cost), mean_latency_ms=("latency_ms", "mean"),
             reuse_rate=("reuse_attempted", "mean")).reindex([p for p in POLICIES if p in set(df.policy)])
         st.subheader("Policy summary")
         st.dataframe(summary.style.format({"success_rate": "{:.0%}", "reuse_rate": "{:.0%}",
-                                           "mean_tokens": "{:,.0f}", "cost_usd": "${:.3f}",
+                                           "mean_tokens": "{:,.0f}", "cost_usd": money,
                                            "mean_latency_ms": "{:.0f}"}), width="stretch")
         a, b = st.columns(2)
         a.subheader("Success by perturbation")
@@ -635,8 +655,8 @@ with tab_plots:
         c3, c4 = st.columns(2)
         with c3:
             fig, ax = new_fig()
-            g = df.groupby("policy").agg(cost=("cost_usd", "sum"), succ=("success", "mean"))
-            for pol in [p for p in POLICIES if p in g.index]:
+            g = df.groupby("policy").agg(cost=("cost_usd", total_cost), succ=("success", "mean"))
+            for pol in [p for p in POLICIES if p in g.index and pd.notna(g.loc[p, "cost"])]:
                 ax.scatter(g.loc[pol, "cost"], g.loc[pol, "succ"] * 100, s=90, color=POLICY_COLOR[pol],
                            edgecolors=SURFACE, linewidths=2, label=pol, zorder=3)
                 ax.annotate(pol, (g.loc[pol, "cost"], g.loc[pol, "succ"] * 100), xytext=(8, 4),
@@ -706,7 +726,7 @@ with tab_plots:
             plt.close(fig)
         with st.expander("Table view of plotted data"):
             st.dataframe(df.groupby(["policy", "perturbation"]).agg(
-                success=("success", "mean"), tokens=("total_tokens", "mean"), cost=("cost_usd", "sum"),
+                success=("success", "mean"), tokens=("total_tokens", "mean"), cost=("cost_usd", total_cost),
                 plan_ms=("plan_latency_ms", "mean"), exec_ms=("exec_latency_ms", "mean")).reset_index(),
                 hide_index=True, width="stretch")
 
@@ -746,7 +766,7 @@ with tab_ep:
         rec = df_all[df_all.episode_id == eid].iloc[0].to_dict()
         ok = rec["success"]
         st.markdown(f"**{'✅ Success' if ok else '❌ Failed'}** · {rec['perturbation_detail']} · "
-                    f"tokens {rec['total_tokens']:,} · cost ${rec['cost_usd']:.4f} · {rec['latency_ms']:.0f} ms")
+                    f"tokens {rec['total_tokens']:,} · cost {money(rec['cost_usd'], 4)} · {rec['latency_ms']:.0f} ms")
         if rec.get("violations"):
             st.warning("\n".join(f"- {v}" for v in rec["violations"]))
         a, b = st.columns(2)
@@ -974,9 +994,11 @@ def run_card() -> None:
             st.metric("Episodes", len(df_all), border=True)
             st.metric("Success", f"{df['success'].mean():.0%}" if len(df) else "–", border=True)
             st.metric("LLM tokens", f"{int(df_all['total_tokens'].sum()):,}", border=True)
-            paid = first.get("provider") not in UNBILLED
-            st.metric("Est. cost", f"${df_all['cost_usd'].sum():.3f}" if paid else "–", border=True, help=(
-                "Token prices are estimates." if paid else "No API charge: the mock planner and local models are not billed."))
+            paid = first.get("provider") not in prices.UNBILLED
+            st.metric("Est. cost", money(total_cost(df_all["cost_usd"])) if paid else "–", border=True, help=(
+                "Reported tokens times the listed prices; taxes and discounts are not included. A dash means the model has "
+                "no listed price (config/llm_prices.csv)." if paid
+                else "No API charge: the mock planner and local models are not billed."))
         sources: dict[str, int] = {}
         for per_episode in df_all.get("tool_sources", pd.Series(dtype=object)):
             if isinstance(per_episode, dict):
@@ -1000,6 +1022,15 @@ def run_card() -> None:
             "Seed": cfg.get("seed", "not logged"),
             "Token budget": f"{budget:,} per episode" if budget else ("off" if cfg else "not logged"),
         }
+        row = run_start_event(sel_run).get("price")
+        if paid and row:
+            rows["Price"] = (f"input ${row['input']:g}, output ${row['output']:g} per million tokens; {row['conditions']}; "
+                             f"checked {row['checked_on']}")
+            if "cached_tokens" in df_all and "cost_uncached_usd" in df_all:
+                rows["Prompt caching"] = (f"{int(df_all['cached_tokens'].sum()):,} cached tokens; cost without caching "
+                                          f"{money(total_cost(df_all['cost_uncached_usd']))}")
+        elif paid and "prices_hash" in run_start_event(sel_run):
+            rows["Price"] = "not listed for this model, so cost is unknown"
         if cfg.get("run_token_budget"):
             rows["Token budget"] += f", {cfg['run_token_budget']:,} per run"
         st.table(pd.DataFrame({"value": [str(v) for v in rows.values()]}, index=list(rows.keys())),

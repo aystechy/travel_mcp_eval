@@ -242,6 +242,15 @@ Retry time is logged (`llm_retries`, `llm_retry_ms`) and left out of `plan_laten
 are counted in the Results, Paper plots and About tabs. Policies can lose different episodes, so repeat such a run before
 comparing them.
 
+## 6c. Cost estimates
+
+`config/llm_prices.csv` lists prices read from the providers' pages on 25 November 2026, with the source of each row.
+Cost = uncached input + cached input + cache writes + output tokens, each at its own price, using the token counts the
+provider reports. Thinking tokens are part of output. Each run logs its price row and the file's hash, so later edits
+never change old results. `cost_uncached_usd` is the same cost without prompt-cache discounts: compare policies on it,
+because later policies may benefit from prompts cached by earlier ones. An unlisted model, or a prompt longer than the
+listed tier, has no cost. The `mock` price is a fixed reference; DeepSeek uses the peak price (off-peak is half).
+
 ## 7. Limitations
 
 - **Small local models.** In trials `qwen3:4b-instruct` still corrupted text (for example `"-than": "mapbox"`), with and
@@ -255,7 +264,7 @@ comparing them.
 - **Times are not validated,** so a flight and ferry on the same day may not connect.
 - **Latency is modelled** and partly assumed (experiences, weather). Latency claims need a real LLM: the `mock`
   planner takes under a millisecond.
-- **Token and cost figures** for `mock` are estimates. LLM prices in `engine/llm_clients.py` need checking.
+- **Token and cost figures** for `mock` are estimates. Others use `config/llm_prices.csv`.
 
 ## 8. Reproducing the setup
 
