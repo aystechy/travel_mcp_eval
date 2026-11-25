@@ -30,6 +30,7 @@ from engine.runctl import (STOP_FILE, RunActiveError, active_run, delete_run,  #
 
 ROOT = Path(__file__).resolve().parent
 POLICIES = ["replan", "cache", "budget_aware"]
+UNBILLED = ("mock", "ollama")  # no API charge
 PERTS = ["P0", "P1", "P2", "P3", "P4", "P5"]
 # Reference categorical palette, slots 1-4 (slots 1-3 validated all-pairs; 1-4 adjacent for stacks).
 POLICY_COLOR = {"replan": "#2a78d6", "cache": "#eb6834", "budget_aware": "#1baf7a"}
@@ -42,8 +43,9 @@ st.set_page_config(page_title="Plan-cache vs re-planning", layout="wide")
 
 
 # ----------------------------------------------------------------------------- data loading
-def read_jsonl(path: Path, offset: int = 0) -> tuple[list[dict], int]:
-    """Read complete JSONL lines from ``offset``; tolerate a partially written last line."""
+def read_jsonl(path: Path, offset: int = 0, run_id: str | None = None) -> tuple[list[dict], int]:
+    """Read complete JSONL lines from ``offset`` (of one run only, if given); tolerate a partial last line."""
+    needle = run_id.encode() if run_id else None
     if not path.exists():
         return [], 0
     rows: list[dict] = []
@@ -52,10 +54,14 @@ def read_jsonl(path: Path, offset: int = 0) -> tuple[list[dict], int]:
         data = f.read()
     end = data.rfind(b"\n") + 1
     for line in data[:end].splitlines():
+        if needle and needle not in line:
+            continue
         try:
-            rows.append(json.loads(line))
+            row = json.loads(line)
         except json.JSONDecodeError:
             continue
+        if run_id is None or row.get("run_id") == run_id:
+            rows.append(row)
     return rows, offset + end
 
 
@@ -127,11 +133,19 @@ def run_labels(frame: pd.DataFrame) -> dict[str, str]:
 
 
 RUN_LABELS = run_labels(runs_df)
+_active = active_run(logs_dir)
+ACTIVE_RUN_ID = (_active or {}).get("run_id")
+if ACTIVE_RUN_ID:
+    if ACTIVE_RUN_ID not in run_ids:  # no finished episode yet
+        run_ids.insert(0, ACTIVE_RUN_ID)
+        RUN_LABELS[ACTIVE_RUN_ID] = f"{ACTIVE_RUN_ID} · running"
+    if st.session_state.get("auto_selected") != ACTIVE_RUN_ID:  # show a new run once; the user may then pick another
+        st.session_state["auto_selected"] = st.session_state["run"] = ACTIVE_RUN_ID
 sel_run = st.sidebar.selectbox("Run", run_ids or ["(no runs yet)"], key="run",
                                format_func=lambda r, L=RUN_LABELS: L.get(r, r))
 if run_ids:
     st.sidebar.caption(f"Run ID `{sel_run}`")
-df = runs_df[runs_df["run_id"] == sel_run].copy() if run_ids else pd.DataFrame()
+df = runs_df[runs_df["run_id"] == sel_run].copy() if run_ids and not runs_df.empty else pd.DataFrame()
 
 
 @st.cache_data(ttl=5, show_spinner=False)
@@ -396,7 +410,7 @@ def run_status_banner(run_id: str | None, run_events: list[dict], episodes: int)
         else:
             state, alert, icon, title, body = ("finished", st.success, ":material/check_circle:", "Finished",
                                                f"Run `{run_id}` completed {n}.")
-    elif st.session_state.get("proc") is not None:
+    elif st.session_state.get("proc") is not None and episodes == 0:
         state, alert, icon, title, body = ("starting", st.info, ":material/progress_activity:", "Starting",
                                            "Launching the batch runner...")
     elif st.session_state.get("force_stopped") == run_id:
@@ -439,30 +453,37 @@ def live_run_header(run_id: str | None, run_events: list[dict]) -> None:
                f"requested source `{source}` · tool data: {split}")
 
 
+def selected_events() -> list[dict]:
+    """Events of the selected run, read incrementally (large fields are dropped to save memory)."""
+    key = (str(EVENTS), sel_run)
+    state = st.session_state.get("ev")
+    if not state or state.get("key") != key or (EVENTS.exists() and EVENTS.stat().st_size < state["offset"]):
+        state = st.session_state["ev"] = {"key": key, "offset": 0, "rows": []}
+    new, state["offset"] = read_jsonl(EVENTS, state["offset"], run_id=sel_run)
+    state["rows"] += [{k: v for k, v in r.items() if k not in ("result_preview", "args")} for r in new]
+    return state["rows"]
+
+
 with tab_live:
     @st.fragment(run_every=POLL)
     def live_panel():
-        state = st.session_state.setdefault("ev", {"offset": 0, "rows": [], "path": str(EVENTS)})
-        if state["path"] != str(EVENTS) or (EVENTS.exists() and EVENTS.stat().st_size < state["offset"]):
-            state.update(offset=0, rows=[], path=str(EVENTS))
-        new, state["offset"] = read_jsonl(EVENTS, state["offset"])
-        state["rows"] = (state["rows"] + new)[-30000:]
-        rows = state["rows"]
+        info = active_run(logs_dir)
+        if info is not None and st.session_state.get("auto_selected") != info.get("run_id"):
+            st.rerun()  # a run just started: a full rerun selects it
+        rows = selected_events()
         if not rows:
-            st.info("No events yet. Start a run from the sidebar or with `python -m engine.batch_runner`.")
+            st.info("No events for this run yet. Start a run from the sidebar or with `python -m engine.batch_runner`.")
             return
-        last_run = next((r["run_id"] for r in reversed(rows) if r.get("run_id")), None)
-        cur = [r for r in rows if r.get("run_id") == last_run]
-        ends = [r for r in cur if r.get("type") == "episode_end"]
-        live_run_header(last_run, cur)
+        ends = [r for r in rows if r.get("type") == "episode_end"]
+        live_run_header(sel_run, rows)
         c = st.columns(4) # st.columns(5)
         # c[0].metric("Run", last_run or "-")
         c[0].metric("Episodes done", len(ends))
         c[1].metric("Success", f"{(sum(e['success'] for e in ends) / len(ends) * 100):.0f}%" if ends else "-")
         c[2].metric("LLM tokens", f"{sum(e.get('total_tokens', 0) for e in ends):,}")
-        c[3].metric("Tool calls", sum(1 for r in cur if r.get("type") == "step_end" and r.get("kind") == "tool"))
-        run_status_banner(last_run, cur, len(ends))
-        view = pd.DataFrame(cur[-40:][::-1])
+        c[3].metric("Tool calls", sum(1 for r in rows if r.get("type") == "step_end" and r.get("kind") == "tool"))
+        run_status_banner(sel_run, rows, len(ends))
+        view = pd.DataFrame(rows[-40:][::-1])
         # llm_call_end carries its own "tokens", episode_end the episode's "total_tokens".
         view["tokens"] = pd.to_numeric(view.reindex(columns=["tokens"])["tokens"].combine_first(
             view.reindex(columns=["total_tokens"])["total_tokens"])).astype("Int64")
@@ -476,7 +497,7 @@ with tab_live:
     live_panel()
 
 with tab_dag:
-    follow = st.toggle("Follow the latest episode live", value=True)
+    follow = st.toggle("Follow the latest episode of the selected run", value=True)
 
     def show_episode(p: dag_view.Pipeline, trace: list[dict], edges: list | None = None) -> None:
         st.image(dag_view.pipeline_svg(p), width=1000, alt=p.summary)
@@ -492,10 +513,10 @@ with tab_dag:
 
     @st.fragment(run_every=POLL)
     def live_dag():
-        rows = st.session_state.get("ev", {}).get("rows") or read_jsonl(EVENTS)[0][-3000:]
+        rows = selected_events()
         eps = [r for r in rows if r.get("type") == "episode_start"]
         if not eps:
-            st.info("No episodes yet.")
+            st.info("No episodes in this run yet.")
             return
         ep = eps[-1]
         evs = [r for r in rows if r.get("episode_id") == ep["episode_id"]]
@@ -506,7 +527,7 @@ with tab_dag:
                 steps[r["step_id"]] = {**steps.get(r["step_id"], {}), **r,
                                        "status": r.get("status", "running")}
         st.caption(f"{ep['policy']} · {ep['task_id']} · attempt {att or '-'}")
-        show_episode(dag_view.pipeline(evs, RUN_ACTIVE), list(steps.values()))
+        show_episode(dag_view.pipeline(evs, RUN_ACTIVE and sel_run == ACTIVE_RUN_ID), list(steps.values()))
 
     if follow:
         live_dag()
@@ -924,7 +945,9 @@ def run_card() -> None:
             st.metric("Episodes", len(df), border=True)
             st.metric("Success", f"{df['success'].mean():.0%}", border=True)
             st.metric("LLM tokens", f"{int(df['total_tokens'].sum()):,}", border=True)
-            st.metric("Est. cost", f"${df['cost_usd'].sum():.3f}", border=True)
+            paid = first.get("provider") not in UNBILLED
+            st.metric("Est. cost", f"${df['cost_usd'].sum():.3f}" if paid else "–", border=True, help=(
+                "Token prices are estimates." if paid else "No API charge: the mock planner and local models are not billed."))
         sources: dict[str, int] = {}
         for per_episode in df.get("tool_sources", pd.Series(dtype=object)):
             if isinstance(per_episode, dict):
